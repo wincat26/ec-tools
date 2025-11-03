@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=prototype/index.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 營運顧問系統 Prototype</title>
+    <style>
+      /*
+       * 簡易過渡頁面：
+       *  1. 在 GitHub Pages 啟用時先顯示 LOGO 與描述
+       *  2. 0 秒後自動導向到 prototype/index.html
+       *  3. 若瀏覽器不支援 meta refresh，使用者仍可點選按鈕進入
+       */
+      :root {
+        color-scheme: light;
+        font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1d4ed8 0%, #22d3ee 100%);
+        color: #0f172a;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+        padding: 48px 40px;
+        text-align: center;
+        max-width: 460px;
+      }
+
+      h1 {
+        font-size: 28px;
+        margin-bottom: 12px;
+      }
+
+      p {
+        margin: 0 auto 32px;
+        line-height: 1.6;
+        color: #334155;
+      }
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: #2563eb;
+        color: #ffffff;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35);
+      }
+
+      .note {
+        margin-top: 16px;
+        font-size: 13px;
+        color: #64748b;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <h1>AI 營運顧問系統 Prototype</h1>
+      <p>即將為你導向 Prototype 首頁。若沒有自動跳轉，請點擊下方按鈕手動前往。</p>
+      <a href="prototype/index.html" rel="noopener">立即前往 Prototype</a>
+      <div class="note">GitHub Pages 透過 Meta Refresh 自動導向至 prototype/index.html</div>
+    </main>
+  </body>
+</html>
+

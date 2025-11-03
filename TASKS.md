@@ -32,6 +32,7 @@
 ### ✅ 文件與協作
 - [x] 複核 `prototype-dashboard-handoff.md` 交接內容
 - [x] 盤點 `prototype` 目錄主要頁面、樣式與腳本模組
+- [x] GitHub 遠端同步策略整理（Repo 結構、忽略項目、協作流程）
 
 ---
 
@@ -41,17 +42,18 @@
 - [ ] AI 即時洞察資訊流模組化（資料來源、動態渲染、互動設計）
 - [ ] 數據分析頁 Insights／智能診斷資訊架構整併
 - [ ] 數據分析頁 KPI 互動（來源切換聯動其他模組）
-- [ ] GitHub 遠端同步策略整理（Repo 結構、忽略項目、協作流程）
 
 ---
 
 ## 📝 未來規劃任務
 
 ### Phase 0: 協作與版本控管
-- [ ] 建立 GitHub 遠端倉庫並同步 Prototype 首版
+- [x] 建立 GitHub 遠端倉庫並同步 Prototype 首版
+- [x] 建立 GitHub Pages 首頁導向（根目錄 index.html → prototype/index.html）
 - [ ] 整理 GitHub 專用 README／Wiki（介紹 Demo 路徑、Mock 資料來源）
 - [ ] 設定分支策略與 PR Flow（main/develop/feature）
 - [ ] 建立 Issue 模板與標籤規則
+- [ ] GitHub Pages 啟用與網址驗證（main / root）
 
 ### Phase 1: Prototype 優化
 - [ ] 優化響應式設計（手機、平板適配）
