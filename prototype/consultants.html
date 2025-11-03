@@ -73,71 +73,85 @@
   <!-- 頁面標題 -->
   <section class="page-header-section">
     <div class="page-header-content">
-      <h1 class="page-title">角色/顧問池</h1>
-      <p class="page-subtitle">支援外部諮詢及人格化技能，選擇不同角色獲得專業見解</p>
+      <div>
+        <h1 class="page-title">角色/顧問池</h1>
+        <p class="page-subtitle">支援外部諮詢及人格化技能，依據營運需求選擇最合適的專家</p>
+      </div>
+      <div class="page-actions">
+        <!-- 待開發項目提示：專家訂閱服務 -->
+        <button class="btn btn-secondary btn-sm" type="button" disabled style="opacity: 0.7; cursor: not-allowed;">
+          專家訂閱（開發中）
+        </button>
+      </div>
     </div>
   </section>
 
   <!-- 主要內容 -->
   <main class="main-content">
     <div class="container">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Rosebud 角色 -->
+      <!-- 顧問卡片集合（使用 CSS Grid 自動調整欄位數） -->
+      <div class="consultant-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg);">
+        <!-- 顧問卡片：紅門電商顧問 -->
         <div class="card">
           <div class="card-header">
-            <h2 class="card-title">📊 Rosebud</h2>
+            <h2 class="card-title">🏪 紅門電商顧問</h2>
+            <p class="card-subtitle" style="font-size: 0.9rem; color: var(--color-gray-600);">專長：整體營運診斷與週期型成長策略</p>
           </div>
           <div class="card-body">
-            <div class="coming-soon-placeholder">
-              <div class="placeholder-icon">👤</div>
-              <h3>資料分析師</h3>
-              <p>即將推出：專精數據解讀與趨勢分析</p>
-            </div>
+            <ul class="consultant-services" style="padding-left: 1.1rem; line-height: 1.6; color: var(--color-gray-700);">
+              <li><strong>營運週檢：</strong>檢視 GMV 金字塔、異常指標與庫存動態，輸出優先待辦清單。</li>
+              <li><strong>商品組合策略：</strong>提供新品上市節奏、加價購與組合包設計建議。</li>
+              <li><strong>轉團隊儀式：</strong>協助建立週會模板、OKR 與 KPI 對齊流程。</li>
+              <li><strong>衝刺計畫：</strong>針對行銷檔期、季節性需求制定 2 週短衝策略。</li>
+            </ul>
           </div>
         </div>
 
-        <!-- 挑戰者角色 -->
+        <!-- 顧問卡片：廣告成效顧問 -->
         <div class="card">
           <div class="card-header">
-            <h2 class="card-title">⚔️ 挑戰者</h2>
+            <h2 class="card-title">📣 廣告成效顧問</h2>
+            <p class="card-subtitle" style="font-size: 0.9rem; color: var(--color-gray-600);">專長：媒體預算配置與素材測試</p>
           </div>
           <div class="card-body">
-            <div class="coming-soon-placeholder">
-              <div class="placeholder-icon">👤</div>
-              <h3>策略挑戰者</h3>
-              <p>即將推出：質疑策略，提供不同視角</p>
-            </div>
+            <ul class="consultant-services" style="padding-left: 1.1rem; line-height: 1.6; color: var(--color-gray-700);">
+              <li><strong>預算模擬：</strong>根據 ROAS 與 CPA 建議分配 Meta / Google / Programmatic 預算。</li>
+              <li><strong>素材診斷：</strong>解析互動率、CTR 與轉換率，規劃 A/B 測試與最佳化腳本。</li>
+              <li><strong>受眾優化：</strong>建立高價值受眾池、排除重複頻率，整合第一方資料再行銷。</li>
+              <li><strong>每週成效報告：</strong>自動輸出廣告洞察摘要與建議行動清單。</li>
+            </ul>
           </div>
         </div>
 
-        <!-- 智者角色 -->
+        <!-- 顧問卡片：網紅合作顧問 -->
         <div class="card">
           <div class="card-header">
-            <h2 class="card-title">🧙 智者</h2>
+            <h2 class="card-title">✨ 網紅合作顧問</h2>
+            <p class="card-subtitle" style="font-size: 0.9rem; color: var(--color-gray-600);">專長：KOL 選擇、口碑行銷與 UGC 轉換</p>
           </div>
           <div class="card-body">
-            <div class="coming-soon-placeholder">
-              <div class="placeholder-icon">👤</div>
-              <h3>深度見解者</h3>
-              <p>即將推出：提供深度見解與長遠規劃建議</p>
-            </div>
+            <ul class="consultant-services" style="padding-left: 1.1rem; line-height: 1.6; color: var(--color-gray-700);">
+              <li><strong>合作名單建議：</strong>依據受眾輪廓、過往成效與預算，推薦最適合的 KOL 條件。</li>
+              <li><strong>活動腳本設計：</strong>提供腳本架構、關鍵話術與商品亮點呈現方式。</li>
+              <li><strong>口碑追蹤：</strong>整合社群聲量、點擊與導購數據，提供合作後複盤。</li>
+              <li><strong>UGC 再利用：</strong>建議二次剪輯、廣告投放與站內導購模組。</li>
+            </ul>
           </div>
         </div>
 
-        <!-- 外部專家顧問 -->
-        <div class="card lg:col-span-3">
+        <!-- 顧問卡片：會員經營顧問 -->
+        <div class="card">
           <div class="card-header">
-            <h2 class="card-title">👨‍💼 外部專家顧問（訂閱制）</h2>
+            <h2 class="card-title">🧡 會員經營顧問</h2>
+            <p class="card-subtitle" style="font-size: 0.9rem; color: var(--color-gray-600);">專長：CRM 旅程與回購成長</p>
           </div>
           <div class="card-body">
-            <div class="coming-soon-placeholder">
-              <div class="placeholder-icon">🔧</div>
-              <h3>功能開發中</h3>
-              <p>即將推出：訂閱外部專家顧問，獲得專業領域建議</p>
-              <a href="expert-subscribe.html" class="btn btn-primary btn-sm" style="margin-top: var(--spacing-md);">
-                查看專家訂閱服務 →
-              </a>
-            </div>
+            <ul class="consultant-services" style="padding-left: 1.1rem; line-height: 1.6; color: var(--color-gray-700);">
+              <li><strong>分群策略：</strong>依照 RFM 與行為訊號制定入門、新客、VIP 的旅程節點。</li>
+              <li><strong>自動化流程：</strong>規劃 Email / LINE 任務流程，串接促購、生日與召回情境。</li>
+              <li><strong>會員成效儀表：</strong>提供回購率、留存率與 LTV 追蹤模板。</li>
+              <li><strong>忠誠計畫設計：</strong>協助設計積分、任務徽章與專屬優惠，強化社群黏著度。</li>
+            </ul>
           </div>
         </div>
       </div>
