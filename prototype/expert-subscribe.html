@@ -12,26 +12,80 @@
   <link rel="stylesheet" href="css/expert.css">
 </head>
 <body>
-  <!-- 導航列 -->
-  <nav class="navbar">
-    <div class="navbar-container">
-      <div class="navbar-brand">
-        <a href="dashboard.html">🚀 AI 營運顧問系統</a>
+  <!-- 主導航欄 -->
+  <nav class="main-navigation">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="dashboard.html" class="nav-logo">
+          AI 營運顧問
+        </a>
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="dashboard.html" class="nav-link" id="nav-dashboard" data-page="dashboard">
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="data.html" class="nav-link" id="nav-data" data-page="data">
+              <span class="nav-text">數據分析</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="insights.html" class="nav-link" id="nav-insights" data-page="insights">
+              <span class="nav-text">洞察中心</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="actions.html" class="nav-link" id="nav-actions" data-page="actions">
+              <span class="nav-text">行動方案</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="consultants.html" class="nav-link" id="nav-consultants" data-page="consultants">
+              <span class="nav-text">角色/顧問</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="reports.html" class="nav-link" id="nav-reports" data-page="reports">
+              <span class="nav-text">報告</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="settings.html" class="nav-link" id="nav-settings" data-page="settings">
+              <span class="nav-text">設定</span>
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="navbar-menu">
-        <a href="dashboard.html" class="navbar-link">返回戰情表</a>
+      <div class="nav-right">
+        <div class="brand-selector-nav">
+          <select class="brand-select-nav" id="brandSelectNav">
+            <option>品牌：豆油伯</option>
+          </select>
+        </div>
+        <div class="user-menu-nav">
+          <div class="user-avatar-nav">👤</div>
+          <span class="user-email-nav" id="userEmailNav">demo@reddoor.com</span>
+        </div>
       </div>
     </div>
   </nav>
 
   <!-- 主要內容 -->
-  <main class="container">
+  <main class="main-content">
     <div class="expert-subscribe-page">
       <!-- 頁面標題 -->
-      <div class="page-header">
-        <h1>專家訂閱服務</h1>
-        <p class="page-subtitle">訂閱專業顧問，獲得即時支援與策略建議</p>
-      </div>
+      <section class="page-header-section" style="margin-bottom: var(--spacing-2xl);">
+        <div class="page-header-content">
+          <div>
+            <h1 class="page-title">專家訂閱服務</h1>
+            <p class="page-subtitle">訂閱專業顧問，獲得即時支援與策略建議</p>
+          </div>
+          <div class="page-actions">
+            <a href="consultants.html" class="btn btn-secondary btn-sm">返回顧問列表</a>
+          </div>
+        </div>
+      </section>
 
       <!-- 專家列表 -->
       <div class="expert-grid" id="expertGrid">
@@ -61,6 +115,7 @@
   <!-- JavaScript -->
   <script src="js/utils.js"></script>
   <script src="js/mockData.js"></script>
+  <script src="js/navigation.js"></script>
   <script src="js/expert-subscribe.js"></script>
 </body>
 </html>

@@ -29,6 +29,11 @@ const routeConfig = {
     title: '角色/顧問池 - AI 營運顧問系統',
     navId: 'nav-consultants'
   },
+  'expert-subscribe': {
+    path: 'expert-subscribe.html',
+    title: '專家訂閱服務 - AI 營運顧問系統',
+    navId: 'nav-consultants'
+  },
   'reports': {
     path: 'reports.html',
     title: '報告設定 - AI 營運顧問系統',
