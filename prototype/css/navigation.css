@@ -194,6 +194,10 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-xl);
 }
 
 .page-title {
@@ -214,6 +218,7 @@
   display: flex;
   gap: var(--spacing-md);
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 /* ========== 響應式設計 ========== */
@@ -237,6 +242,18 @@
 }
 
 @media (max-width: 768px) {
+  .page-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+  }
+  
+  .page-actions {
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: var(--spacing-md);
+  }
+  
   .nav-container {
     padding: 0 var(--spacing-md);
     height: 56px;
