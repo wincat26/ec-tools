@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 營運顧問系統</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <!-- 頁面專用 CSS 請在此處加入 -->
+</head>
+<body>
+  <!-- 主導航欄 -->
+  <nav class="main-navigation">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="dashboard.html" class="nav-logo">
+          AI 營運顧問
+        </a>
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="dashboard.html" class="nav-link" id="nav-dashboard" data-page="dashboard">
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="data.html" class="nav-link" id="nav-data" data-page="data">
+              <span class="nav-text">數據分析</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="insights.html" class="nav-link" id="nav-insights" data-page="insights">
+              <span class="nav-text">洞察中心</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="actions.html" class="nav-link" id="nav-actions" data-page="actions">
+              <span class="nav-text">行動方案</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="consultants.html" class="nav-link" id="nav-consultants" data-page="consultants">
+              <span class="nav-text">角色/顧問</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="reports.html" class="nav-link" id="nav-reports" data-page="reports">
+              <span class="nav-text">報告</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="settings.html" class="nav-link" id="nav-settings" data-page="settings">
+              <span class="nav-text">設定</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="brand-selector-nav">
+          <select class="brand-select-nav" id="brandSelectNav">
+            <option>品牌：豆油伯</option>
+          </select>
+        </div>
+        <div class="user-menu-nav">
+          <div class="user-avatar-nav">👤</div>
+          <span class="user-email-nav" id="userEmailNav">demo@reddoor.com</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 麵包屑導航（可選） -->
+  <div id="breadcrumb" class="breadcrumb" style="display: none;">
+    <!-- 由 JavaScript 動態生成 -->
+  </div>
+
+  <!-- 頁面標題區（可選） -->
+  <section class="page-header-section" id="pageHeader" style="display: none;">
+    <div class="page-header-content">
+      <h1 class="page-title" id="pageTitle">頁面標題</h1>
+      <p class="page-subtitle" id="pageSubtitle">頁面副標題說明</p>
+      <div class="page-actions" id="pageActions">
+        <!-- 頁面動作按鈕 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 主要內容區 -->
+  <main class="main-content" id="mainContent">
+    <!-- 頁面內容請放在這裡 -->
+    <div class="container">
+      <!-- YOUR CONTENT HERE -->
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script src="js/utils.js"></script>
+  <script src="js/navigation.js"></script>
+  <!-- 頁面專用 JavaScript 請在此處加入 -->
+</body>
+</html>
+

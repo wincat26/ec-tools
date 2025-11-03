@@ -1,0 +1,202 @@
+AI 營運顧問系統 — Guideline AI 模型與建議生成邏輯
+
+檔案版本： v1.0
+檔名： 06_Guideline_Logic_And_AI_Model.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive AI/PM Team
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案定義：
+
+Guideline AI 模型 的資料輸入、判斷邏輯、生成機制
+
+指標監控規則（KPI Rules） 與 異常觸發條件（Triggers）
+
+Prompt 範本設計（Rule-based → LLM）
+
+輸出格式與品質標準
+
+監控與持續優化策略
+
+2️⃣ 系統概念總覽（Concept Overview）
+
+Guideline 模組的核心任務是：
+
+「將營運數據 → 轉換成可執行的營運建議句。」
+
+運作路徑如下：
+
+flowchart LR
+  A[每日更新數據 (BQ Processed Layer)] --> B[指標監測規則檢測 (Rules Engine)]
+  B -->|異常觸發| C[Guideline Trigger Table]
+  C -->|生成 Prompt| D[AI 文字生成引擎 (LLM / BQML)]
+  D --> E[Guideline Suggestion Table]
+  E --> F[前端展示 (Dashboard)]
+  F -->|使用者操作| G[行動任務清單 (Action Queue)]
+
+3️⃣ 指標監控規則（KPI Monitoring Rules）
+
+系統每日掃描主要 KPI（營收、流量、轉換率、客單價、ROAS、留存率等）。
+當指標變化超過門檻值時，會觸發異常事件（Trigger）。
+
+KPI 名稱	來源表	監測週期	觸發條件	觸發標籤
+營收 Revenue	processed.daily_summary	每日	下降超過 10%	revenue_drop
+流量 Sessions	source_metrics	每日	下降超過 8%	traffic_drop
+轉換率 CVR	source_metrics + events_*	每日	下降超過 0.3% 絕對值	conversion_drop
+客單價 AOV	lv0_orders	每週	變化超過 ±5%	aov_change
+廣告 ROAS	ad_data.*	每週	ROAS < 3.0	roas_low
+留存率 Retention	customers	每月	下降超過 5%	retention_drop
+
+範例：
+
+SELECT 
+  'conversion_drop' AS trigger_type,
+  source_name,
+  ROUND((curr_cvr - prev_cvr) / prev_cvr * 100, 2) AS delta
+FROM processed.source_metrics
+WHERE ROUND((curr_cvr - prev_cvr) / prev_cvr * 100, 2) < -0.3;
+
+4️⃣ Guideline 生成流程（AI Guideline Generation Flow）
+graph TD
+  A[Rule Trigger] --> B[Guideline Trigger Table]
+  B --> C[組合指標上下文 Context Builder]
+  C --> D[Prompt 範本產生器 Template Engine]
+  D --> E[LLM 生成器 (OpenAI API / BQML)]
+  E --> F[Guideline Suggestion Table]
+  F --> G[Dashboard 顯示 + 任務生成]
+
+5️⃣ Prompt 範本設計（Prompt Template Design）
+🎯 Base Prompt
+你是一位電商營運顧問，根據以下數據生成簡潔、具行動性的建議。
+請以「觀察結果 + 建議」兩段式呈現。
+
+【輸入資料】
+期間：{{date_range}}
+流量來源：{{source}}
+KPI：{{metric}}（{{value}}）
+前期比較：{{previous_value}}（{{delta}}%）
+關聯商品或活動：{{related_item}}
+
+【輸出格式】
+🧠 觀察結果：一句明確描述問題
+💡 建議：一個具體行動（以動詞開頭）
+
+📊 範例輸入
+{
+  "date_range": "2025/10/21–2025/10/27",
+  "source": "Meta Ads",
+  "metric": "轉換率",
+  "value": "1.1%",
+  "previous_value": "1.4%",
+  "delta": "-0.3%",
+  "related_item": "橄欖油麵包組"
+}
+
+🤖 範例輸出
+🧠 觀察結果：Meta Ads 流量穩定，但轉換率下降 0.3%，主要影響商品為橄欖油麵包系列。
+💡 建議：重新設定 Meta 受眾，聚焦最近14天瀏覽過商品頁但未購買的訪客。
+
+6️⃣ Prompt 分層邏輯（Rule → Template → AI）
+層級	類型	功能	範例
+Level 1：Rule-based	固定格式建議	若指標變化明確且類型固定（如流量下降）	「流量下降 X%，建議檢視主要來源與廣告素材。」
+Level 2：Template AI	半自動文字生成	系統填入數值，AI 生成自然語句	「轉換率下降 0.3%，可能與商品頁互動率下降有關。」
+Level 3：Contextual AI	全自動上下文建議	融合多指標與商品資訊生成策略建議	「高價商品佔比過高，建議推出入門包吸引新客。」
+7️⃣ Guideline 資料結構（Schema）
+CREATE TABLE processed.guideline_suggestions (
+  id STRING,
+  date DATE,
+  category STRING,
+  source STRING,
+  metric STRING,
+  current_value FLOAT64,
+  delta FLOAT64,
+  insight STRING,
+  suggestion STRING,
+  confidence_score FLOAT64,
+  created_at TIMESTAMP
+);
+
+
+欄位說明：
+
+欄位	說明
+id	系統唯一識別碼
+category	建議類別（流量 / 轉換 / 商品 / 會員）
+source	對應流量來源（Meta、搜尋等）
+metric	指標名稱
+insight	AI 生成的觀察結果
+suggestion	AI 生成的建議行動
+confidence_score	AI 建議信心值（0–1）
+8️⃣ 建議分類邏輯（Suggestion Classification）
+類別	判斷條件	典型建議範例
+流量型	Sessions 下降	「加強 SEO、重新分配廣告預算」
+轉換型	CVR 下降	「優化商品頁 CTA、調整促銷內容」
+商品型	AOV 下降 / 銷售集中	「新增入門組合包或加價購方案」
+會員型	留存率下降 / 新客比例低	「發送再行銷 EDM、提供回購優惠」
+廣告型	ROAS 過低	「關閉低效活動、重新測試素材」
+9️⃣ AI 模型選擇與運行架構（Model & Infra）
+模型類型	技術實作	用途
+Rule Engine	SQL + Dataform Trigger	異常偵測
+AI Text Engine	BigQuery ML: AI.GENERATE_TEXT_FROM_TABLE	文字生成（可離線運行）
+LLM API	OpenAI GPT-5	強化語意理解與本地化語氣
+Hybrid Mode	BQML + LLM Post-processing	平衡速度與語意豐富度
+
+運行邏輯：
+
+先由 BQML 根據觸發表生成初步建議（低成本）
+
+再由 LLM（OpenAI）進行語意強化與本地語調微調（繁體中文）
+
+最終輸出回寫至 BigQuery 並回傳前端展示
+
+🔟 品質控管（Quality Evaluation）
+評估項目	指標	驗證方式	目標值
+語意清晰度	自然語句可理解比例	人工審查	≥ 90%
+內容相關性	與數據變化一致	人工比對	≥ 80%
+建議可行性	是否能直接採取行動	顧問評分	≥ 85%
+重複率	同週內重複建議	系統檢查	< 10%
+成效迴饋	任務採納率	實際執行資料	≥ 50%
+11️⃣ 監控與迭代（Monitoring & Improvement Loop）
+graph LR
+  A[Guideline 生成紀錄] --> B[人工審查 & 評分表]
+  B --> C[模型調整 (Prompt Fine-tune)]
+  C --> D[再訓練或範本修正]
+  D --> E[新版本部署至 BQML / API]
+  E --> F[自動更新下一週版本]
+
+
+系統每日記錄建議內容與採納率
+
+每月由營運顧問團隊進行人工評估（Top 100 條建議）
+
+調整 Prompt 範本與參數（如溫度、max tokens）
+
+高採納建議將被加入「最佳實踐語料庫（Best Practice Library）」供再訓練使用
+
+12️⃣ 範例：完整 Guideline 輸出流程展示
+輸入資料：
+KPI	異常值	來源	商品	期間
+轉換率	↓0.4%	廣告流量	橄欖油麵包	2025/10/21–2025/10/27
+系統生成：
+🧠 觀察結果：
+過去 7 日廣告流量穩定，但轉換率下降 0.4%，主要發生於橄欖油麵包商品。
+
+💡 建議：
+重新設定 Meta Ads 受眾，聚焦過去 14 天訪過商品頁但未完成結帳的訪客。
+同時，測試商品頁 CTA 顏色以提升互動率。
+
+輸出記錄：
+欄位	值
+category	轉換率
+source	Meta Ads
+metric	CVR
+insight	轉換率下降 0.4%，主要出現在橄欖油麵包。
+suggestion	調整受眾與商品頁 CTA 顏色。
+confidence_score	0.88
+✅ 摘要（Executive Summary）
+
+Guideline 模型是 AI 營運顧問的「大腦」，
+它將冷冰冰的數據轉譯成可理解、可執行的建議。
+系統結合 規則邏輯（Rule-based） 與 自然語言生成（LLM），
+形成一個具備自學能力的顧問迴路，讓每次建議都比上次更準確、更貼近營運決策。

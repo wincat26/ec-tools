@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>數據分析 - AI 營運顧問系統</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/data.css">
+</head>
+<body>
+  <!-- 主導航欄 -->
+  <nav class="main-navigation">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="dashboard.html" class="nav-logo">
+          AI 營運顧問
+        </a>
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="dashboard.html" class="nav-link" id="nav-dashboard" data-page="dashboard">
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="data.html" class="nav-link active" id="nav-data" data-page="data">
+              <span class="nav-text">數據分析</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="insights.html" class="nav-link" id="nav-insights" data-page="insights">
+              <span class="nav-text">洞察中心</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="actions.html" class="nav-link" id="nav-actions" data-page="actions">
+              <span class="nav-text">行動方案</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="consultants.html" class="nav-link" id="nav-consultants" data-page="consultants">
+              <span class="nav-text">角色/顧問</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="reports.html" class="nav-link" id="nav-reports" data-page="reports">
+              <span class="nav-text">報告</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="settings.html" class="nav-link" id="nav-settings" data-page="settings">
+              <span class="nav-text">設定</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="brand-selector-nav">
+          <select class="brand-select-nav" id="brandSelectNav">
+            <option>品牌：豆油伯</option>
+          </select>
+        </div>
+        <div class="user-menu-nav">
+          <div class="user-avatar-nav">👤</div>
+          <span class="user-email-nav" id="userEmailNav">demo@reddoor.com</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 頁面標題 -->
+  <section class="page-header-section">
+    <div class="page-header-content">
+      <h1 class="page-title">數據分析</h1>
+      <p class="page-subtitle">可 drill-down 的主題式數據分析，深入探索 GMV 拆解與多維度指標</p>
+      <div class="page-actions">
+        <select class="form-input" id="dateRangeSelect" style="max-width: 200px;">
+          <option value="7d">最近 7 天</option>
+          <option value="30d">最近 30 天</option>
+          <option value="custom">自訂範圍</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主要內容 -->
+  <main class="main-content data-main">
+    <div class="container data-summary-section">
+      <div class="data-summary-header">
+        <div>
+          <h2>GMV 基本指標公式</h2>
+          <p id="dataRangeLabel">最近 7 天 · 與上週同期比較</p>
+        </div>
+        <div class="data-summary-controls">
+          <label for="dataRangeSelect" class="sr-only">選擇時間區間</label>
+          <select class="form-input" id="dataRangeSelect">
+            <option value="7d">最近 7 天</option>
+            <option value="yesterday">昨天</option>
+            <option value="30d">最近 30 天</option>
+            <option value="custom">自訂範圍</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" id="dataCustomRangeBtn" type="button">自訂日期</button>
+        </div>
+      </div>
+
+      <div class="data-summary-grid">
+        <article class="data-revenue-panel data-kpi-card" id="dataRevenuePanel">
+          <div class="revenue-card revenue-card--net">
+            <div class="revenue-card-header">
+              <span class="revenue-title">成交營收（成交金額）</span>
+              <span class="revenue-note">含已完成訂單實收金額</span>
+            </div>
+            <div class="revenue-value" id="netRevenueValue">--</div>
+            <div class="revenue-substats">
+              <span id="netOrderCount">成交訂單數 -- 筆</span>
+            </div>
+          </div>
+          <div class="revenue-card revenue-card--gross">
+            <div class="revenue-card-header">
+              <span class="revenue-title">總營業額</span>
+              <span class="revenue-note">未扣除取消/退單金額</span>
+            </div>
+            <div class="revenue-value" id="grossRevenueValue">--</div>
+            <div class="revenue-substats">
+              <span id="grossOrderCount">總訂單數 -- 筆</span>
+            </div>
+          </div>
+          <div class="revenue-footer">
+            <div class="cancel-metric">
+              <span class="cancel-label">取消率</span>
+              <div class="cancel-progress">
+                <div class="cancel-progress-bar" id="cancelProgressBar"></div>
+              </div>
+              <span class="cancel-value" id="cancelRateValue">--</span>
+            </div>
+            <div class="revenue-formula">
+              <span class="formula-label">GMV 指標公式</span>
+              <span class="formula-text">工作階段 × 轉換率 × 平均訂單金額</span>
+            </div>
+          </div>
+        </article>
+        <article class="data-kpi-card" id="dataSnapshotCard">
+          <h3>本週關鍵摘要</h3>
+          <div class="data-kpi-meta" id="dataSnapshotList"></div>
+          <section>
+            <h4 style="font-size:0.95rem;color:var(--color-gray-600);margin:8px 0 4px;">AI 洞察焦點</h4>
+            <ul class="anomaly-list" id="dataSnapshotInsights"></ul>
+          </section>
+        </article>
+      </div>
+    </div>
+
+    <div class="container data-module-stack">
+      <section class="data-module data-module--traffic" id="trafficModule">
+        <header class="data-module-header">
+          <h2>流量分析</h2>
+          <div class="data-module-controls" id="trafficSourceControls">
+            <button class="pill-button active" data-traffic-source="direct">直接流量</button>
+            <button class="pill-button" data-traffic-source="ads">付費廣告</button>
+            <button class="pill-button" data-traffic-source="member">會員經營</button>
+            <button class="pill-button" data-traffic-source="ai">AI 來源</button>
+            <button class="pill-button" data-traffic-source="organic">自然搜尋</button>
+            <button class="pill-button" data-traffic-source="social">社群經營</button>
+            <button class="pill-button" data-traffic-source="referral">參照連結</button>
+            <button class="pill-button" data-traffic-source="other">其他</button>
+          </div>
+        </header>
+        <div class="data-module-grid data-module-grid--traffic">
+          <article class="module-card module-card--stat" id="trafficSessionsCard">
+            <h3>Sessions</h3>
+            <div class="stat-value" id="trafficSessionsValue">--</div>
+            <p class="stat-desc" id="trafficSessionsDesc">等待資料...</p>
+          </article>
+          <article class="module-card module-card--stat" id="trafficAovCard">
+            <h3>平均訂單金額</h3>
+            <div class="stat-value" id="trafficAovValue">--</div>
+            <p class="stat-desc" id="trafficAovDesc">等待資料...</p>
+          </article>
+          <article class="module-card module-card--stat" id="trafficCvrCard">
+            <h3>轉換率</h3>
+            <div class="stat-value" id="trafficCvrValue">--</div>
+            <p class="stat-desc" id="trafficCvrDesc">等待資料...</p>
+          </article>
+        </div>
+        <div class="data-ai-insight" id="trafficAiInsight">
+          <h3>AI 洞察分析</h3>
+          <ul class="recommendation-list" id="trafficAiInsightList">
+            <li>等待資料...</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="data-module data-module--aov" id="aovModule">
+        <header class="data-module-header">
+          <h2>平均訂單金額分析</h2>
+          <div class="data-module-controls">
+            <button class="pill-button active" data-aov-dimension="overall">整體</button>
+            <button class="pill-button" data-aov-dimension="new">新客</button>
+            <button class="pill-button" data-aov-dimension="returning">回購客</button>
+          </div>
+        </header>
+        <div class="data-module-grid data-module-grid--aov">
+          <article class="module-card chart-card" id="aovCartCard">
+            <div class="chart-header">
+              <div>
+                <h3>購物車件數分布</h3>
+                <p class="chart-subtitle" id="aovCartSubtitle">整體 · 件數結構</p>
+              </div>
+              <span class="chart-note">顯示各件數佔比與平均訂單金額</span>
+            </div>
+            <div class="chart-bar-list" id="aovCartList"></div>
+          </article>
+          <article class="module-card chart-card" id="aovPriceBandCard">
+            <div class="chart-header">
+              <div>
+                <h3>價格帶結構</h3>
+                <p class="chart-subtitle" id="aovPriceSubtitle">整體 · 單價組成</p>
+              </div>
+              <span class="chart-note">區分高/中/低價格帶的訂單占比</span>
+            </div>
+            <div class="chart-bar-list chart-bar-list--stack" id="aovPriceList"></div>
+          </article>
+        </div>
+        <div class="data-ai-insight" id="aovAiInsight">
+          <h3>AI 洞察分析</h3>
+          <ul class="recommendation-list" id="aovAiInsightList">
+            <li>等待資料...</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="data-module data-module--funnel" id="funnelModule">
+        <header class="data-module-header">
+          <h2>轉換率漏斗分析</h2>
+          <div class="data-module-controls">
+            <button class="pill-button active" data-funnel-range="7d">最近 7 天</button>
+            <button class="pill-button" data-funnel-range="30d">最近 30 天</button>
+            <button class="pill-button" data-funnel-range="90d">最近 90 天</button>
+          </div>
+        </header>
+        <div class="data-module-grid data-module-grid--funnel">
+          <article class="module-card chart-card funnel-side" id="productFunnelCard">
+            <div class="chart-header">
+              <div>
+                <h3>商品分區</h3>
+                <p class="chart-subtitle" id="productFunnelSubtitle">Top 商品漏斗</p>
+              </div>
+              <div class="chart-tabs">
+                <button class="pill-button active" data-product-segment="topProducts">Top 商品</button>
+                <button class="pill-button" data-product-segment="categories">商品類別</button>
+              </div>
+            </div>
+            <div class="mini-funnel-list" id="productFunnelList"></div>
+          </article>
+          <article class="module-card funnel-main" id="mainFunnelCard">
+            <div class="chart-header">
+              <div>
+                <h3>全站漏斗</h3>
+                <p class="chart-subtitle" id="mainFunnelSubtitle">最近 7 天 · GA4 標準事件</p>
+              </div>
+              <span class="chart-note">從訪客到成交的核心轉換率</span>
+            </div>
+            <div class="funnel-visual" id="mainFunnelVisual"></div>
+          </article>
+          <article class="module-card chart-card funnel-side" id="campaignFunnelCard">
+            <div class="chart-header">
+              <div>
+                <h3>活動分區</h3>
+                <p class="chart-subtitle" id="campaignFunnelSubtitle">活動表現漏斗</p>
+              </div>
+              <div class="chart-tabs">
+                <button class="pill-button active" data-activity-segment="campaigns">熱門活動</button>
+                <button class="pill-button" data-activity-segment="channels">推廣渠道</button>
+              </div>
+            </div>
+            <div class="mini-funnel-list" id="campaignFunnelList"></div>
+          </article>
+        </div>
+        <div class="data-ai-insight" id="funnelAiInsight">
+          <h3>AI 洞察分析</h3>
+          <ul class="recommendation-list" id="funnelAiInsightList">
+            <li>等待資料...</li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="data-export">
+        <button class="btn btn-secondary btn-sm" id="dataExportBtn" type="button">匯出報表（即將推出）</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script src="js/mockData.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    (function () {
+      if (!window.mockData || !window.utils) return;
+
+      const summary = mockData.summary;
+      const kpi = mockData.kpiPyramid;
+      const guidelines = mockData.guidelines || [];
+      const tasks = mockData.tasks || [];
+      const trafficSources = mockData.trafficSources || [];
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+
+      const formatChange = (change) => `${change >= 0 ? '↑' : '↓'} ${Math.abs(change)}%`;
+
+      const dataRangeLabel = document.getElementById('dataRangeLabel');
+      if (dataRangeLabel) {
+        dataRangeLabel.textContent = `${summary.dateRange} · 與上週 (${summary.previousWeek}) 比較`;
+      }
+
+      // === 營收與訂單總覽 ===
+      const marketingSpend = 123674;
+      const cancellationRate = 14.54;
+      const grossRevenue = summary.revenue / (1 - cancellationRate / 100);
+      const refundAmount = grossRevenue - summary.revenue;
+      const orderCount = kpi.aov.value > 0 ? Math.round(summary.revenue / kpi.aov.value) : 0;
+      const totalOrders = Math.round(orderCount / (1 - cancellationRate / 100));
+      const cancelledOrders = Math.max(totalOrders - orderCount, 0);
+      const roas = marketingSpend > 0 ? (summary.revenue / marketingSpend).toFixed(2) : '—';
+
+      setText('netRevenueValue', utils.formatCurrency(Math.round(summary.revenue)));
+      setText('netOrderCount', `成交訂單數 ${utils.formatNumber(orderCount)} 筆`);
+      setText('grossRevenueValue', utils.formatCurrency(Math.round(grossRevenue)));
+      setText('grossOrderCount', `總訂單數 ${utils.formatNumber(totalOrders)} 筆`);
+
+      const cancelRateValue = document.getElementById('cancelRateValue');
+      if (cancelRateValue) {
+        cancelRateValue.textContent = `${cancellationRate.toFixed(2)}%（${utils.formatNumber(cancelledOrders)} 筆）`;
+      }
+
+      const cancelProgressBar = document.getElementById('cancelProgressBar');
+      if (cancelProgressBar) {
+        cancelProgressBar.style.width = `${Math.min(cancellationRate, 100)}%`;
+      }
+
+      const snapshotList = document.getElementById('dataSnapshotList');
+      if (snapshotList) {
+        const snapshotItems = [
+          { label: '營收變化', value: formatChange(summary.revenueChange) },
+          { label: '流量變化', value: formatChange(kpi.traffic.change) },
+          { label: '轉換率變化', value: formatChange(kpi.conversion.change) },
+          { label: '客單價變化', value: formatChange(kpi.aov.change) },
+          { label: '訂單筆數', value: utils.formatNumber(orderCount) },
+          { label: '取消退貨金額', value: utils.formatCurrency(Math.round(refundAmount)) },
+          { label: '行銷花費', value: utils.formatCurrency(marketingSpend) },
+          { label: 'ROAS', value: roas },
+          { label: '取消率', value: `${cancellationRate.toFixed(2)}%` }
+        ];
+        snapshotList.innerHTML = snapshotItems.map(item => `
+          <div class="meta-item">
+            <span class="meta-label">${item.label}</span>
+            <span class="meta-value">${item.value}</span>
+          </div>
+        `).join('');
+      }
+
+      const snapshotInsights = document.getElementById('dataSnapshotInsights');
+      if (snapshotInsights) {
+        const topInsights = guidelines.slice(0, 3);
+        snapshotInsights.innerHTML = topInsights.length
+          ? topInsights.map(g => `<li><strong>${g.category}｜${g.source}</strong>：${g.insight}</li>`).join('')
+          : '<li>目前沒有偵測到異常指標，營運狀況穩定。</li>';
+      }
+
+      // === 流量分析 ===
+      const totalTrafficSessions = trafficSources.reduce((sum, item) => sum + item.sessions, 0);
+      const trafficCategoryMap = {
+        direct: { label: '直接流量', sources: ['直接'] },
+        ads: { label: '付費廣告', sources: ['廣告'] },
+        member: { label: '會員經營', sources: ['Email'] },
+        ai: { label: 'AI 來源', sources: ['AI'] },
+        organic: { label: '自然搜尋', sources: ['搜尋'] },
+        social: { label: '社群經營', sources: ['社群'] },
+        referral: { label: '參照連結', sources: ['推薦'] },
+        other: { label: '其他', sources: ['其他'] }
+      };
+
+      const renderInsightList = (container, guideList, taskList, emptyMessage) => {
+        if (!container) return;
+        const items = [];
+        guideList.forEach(g => {
+          const insightText = g.insight ? `${g.insight}。` : '';
+          const suggestionText = g.suggestion || '建議持續觀察。';
+          items.push(`<li><strong>AI 洞察：</strong>${insightText}<span class="insight-suggestion">建議：${suggestionText}</span></li>`);
+        });
+        taskList.forEach(t => items.push(`<li><strong>任務：</strong>${t.title} — ${t.description}</li>`));
+        container.innerHTML = items.length ? items.join('') : `<li>${emptyMessage}</li>`;
+      };
+
+      const updateTrafficModule = (categoryKey) => {
+        const config = trafficCategoryMap[categoryKey] || trafficCategoryMap.direct;
+        const selectedSources = trafficSources.filter(src => config.sources.includes(src.source));
+
+        const totalSessions = selectedSources.reduce((sum, src) => sum + src.sessions, 0);
+        const totalRevenue = selectedSources.reduce((sum, src) => sum + src.revenue, 0);
+        const totalChange = selectedSources.reduce((sum, src) => sum + (src.change || 0) * src.sessions, 0);
+        const totalOrders = selectedSources.reduce((sum, src) => {
+          const orders = src.aov > 0 ? src.revenue / src.aov : 0;
+          return sum + orders;
+        }, 0);
+        const avgAov = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+        const avgCvr = totalSessions > 0 ? selectedSources.reduce((sum, src) => sum + (src.cvr || 0) * src.sessions, 0) / totalSessions : 0;
+        const share = totalTrafficSessions > 0 ? ((totalSessions / totalTrafficSessions) * 100).toFixed(1) : '0.0';
+        const avgChange = totalSessions > 0 ? totalChange / totalSessions : 0;
+        const totalConversions = Math.round(totalSessions * (avgCvr / 100));
+
+        setText('trafficSessionsValue', totalSessions ? utils.formatNumber(totalSessions) : '--');
+        setText('trafficSessionsDesc', totalSessions ? `佔總流量 ${share}% · 變化 ${formatChange(avgChange)}` : '尚無資料');
+
+        setText('trafficAovValue', totalRevenue ? utils.formatCurrency(Math.round(avgAov)) : '--');
+        setText('trafficAovDesc', totalRevenue ? `累計營收 ${utils.formatCurrency(Math.round(totalRevenue))}` : '尚無資料');
+
+        setText('trafficCvrValue', totalSessions ? `${avgCvr.toFixed(2)}%` : '--');
+        setText('trafficCvrDesc', totalSessions ? `預估轉換訂單 ${utils.formatNumber(totalConversions)}` : '尚無資料');
+
+        const trafficAiList = document.getElementById('trafficAiInsightList');
+        if (trafficAiList) {
+          const relatedGuidelines = guidelines.filter(g => g.category.includes('流量') || config.sources.some(name => g.source.includes(name)));
+          const relatedTasks = tasks.filter(t => t.category === '流量' || t.category === '廣告');
+          renderInsightList(trafficAiList, relatedGuidelines, relatedTasks, '目前沒有相關 AI 洞察，請持續觀察。');
+        }
+      };
+
+      const trafficButtons = document.querySelectorAll('[data-traffic-source]');
+      trafficButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          trafficButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          updateTrafficModule(btn.dataset.trafficSource);
+        });
+      });
+
+      const defaultTrafficKey = document.querySelector('[data-traffic-source].active')?.dataset.trafficSource || 'direct';
+      updateTrafficModule(defaultTrafficKey);
+
+      // === 平均訂單金額分析 ===
+      const aovAnalysis = mockData.aovAnalysis || {};
+      const aovSegments = aovAnalysis.segments || {};
+      const aovExtraInsights = aovAnalysis.insights || [];
+
+      /**
+       * 渲染平均訂單金額區塊（購物車件數分布與價格帶結構）
+       * @param {string} segmentKey 目前選取的客群代碼（overall/new/returning）
+       */
+      const updateAovModule = (segmentKey) => {
+        const segment = aovSegments[segmentKey] || aovSegments.overall;
+        if (!segment) return;
+
+        const cartList = document.getElementById('aovCartList');
+        const priceList = document.getElementById('aovPriceList');
+        const cartSubtitle = document.getElementById('aovCartSubtitle');
+        const priceSubtitle = document.getElementById('aovPriceSubtitle');
+
+        if (cartSubtitle) {
+          cartSubtitle.textContent = `${segment.label} · 件數結構`;
+        }
+
+        if (priceSubtitle) {
+          priceSubtitle.textContent = `${segment.label} · 單價組成`;
+        }
+
+        if (cartList) {
+          cartList.innerHTML = (segment.cartDistribution || []).map(item => {
+            const share = Number(item.share || 0);
+            const avg = item.avgValue ? utils.formatCurrency(item.avgValue) : '—';
+            return `
+              <div class="chart-bar-row">
+                <div class="chart-bar-label">
+                  <span class="label-main">${item.label}</span>
+                  <span class="label-sub">平均訂單金額 ${avg}</span>
+                </div>
+                <div class="chart-bar-track" role="presentation" aria-hidden="true">
+                  <div class="chart-bar-fill" style="width: ${Math.min(Math.max(share, 0), 100)}%;"></div>
+                </div>
+                <span class="chart-bar-value">${share.toFixed(0)}%</span>
+              </div>
+            `;
+          }).join('');
+        }
+
+        if (priceList) {
+          priceList.innerHTML = (segment.priceBands || []).map(item => {
+            const share = Number(item.share || 0);
+            const avg = item.avgOrderValue ? utils.formatCurrency(item.avgOrderValue) : '—';
+            return `
+              <div class="chart-bar-row">
+                <div class="chart-bar-label">
+                  <span class="label-main">${item.label}</span>
+                  <span class="label-sub">平均訂單金額 ${avg}</span>
+                </div>
+                <div class="chart-bar-track" role="presentation" aria-hidden="true">
+                  <div class="chart-bar-fill" style="width: ${Math.min(Math.max(share, 0), 100)}%;"></div>
+                </div>
+                <span class="chart-bar-value">${share.toFixed(0)}%</span>
+              </div>
+            `;
+          }).join('');
+        }
+
+        const aovAiInsightList = document.getElementById('aovAiInsightList');
+        if (aovAiInsightList) {
+          const aovGuidelines = guidelines.filter(g => g.category.includes('客單價'));
+          const aovTasks = tasks.filter(t => t.category === '客單價');
+          const extra = aovExtraInsights.filter(item => item.segment === segmentKey || item.segment === 'overall');
+
+          const insightItems = [];
+
+          extra.forEach(item => {
+            insightItems.push(`<li><strong>洞察：</strong>${item.text}</li>`);
+          });
+
+          aovGuidelines.forEach(g => {
+            const insightText = g.insight ? `${g.insight}。` : '';
+            const suggestionText = g.suggestion || '建議持續觀察。';
+            insightItems.push(`<li><strong>AI 洞察：</strong>${insightText}<span class="insight-suggestion">建議：${suggestionText}</span></li>`);
+          });
+
+          aovTasks.forEach(task => {
+            insightItems.push(`<li><strong>任務：</strong>${task.title} — ${task.description}</li>`);
+          });
+
+          aovAiInsightList.innerHTML = insightItems.length
+            ? insightItems.join('')
+            : '<li>目前沒有針對客單價的 AI 建議。</li>';
+        }
+      };
+
+      const defaultAovSegment = document.querySelector('[data-aov-dimension].active')?.dataset.aovDimension || 'overall';
+      updateAovModule(defaultAovSegment);
+
+      // === 漏斗分析 ===
+      const funnelData = mockData.conversionFunnel || {};
+      const funnelRanges = funnelData.ranges || [];
+      const funnelProducts = funnelData.productSegments || [];
+      const funnelCampaigns = funnelData.campaignSegments || [];
+
+      const formatPercent = (value) => {
+        if (Number.isNaN(value)) return '—';
+        return `${(Math.round(value * 10) / 10).toFixed(1)}%`;
+      };
+
+      const renderMainFunnel = (rangeId) => {
+        const mainContainer = document.getElementById('mainFunnelVisual');
+        if (!mainContainer) return;
+
+        const rangeData = (funnelData.overall && funnelData.overall[rangeId]) || funnelData.overall?.[funnelRanges[0]?.id] || funnelData.overall?.['7d'] || { steps: [] };
+        const steps = rangeData.steps || [];
+        const subtitle = funnelRanges.find(r => r.id === rangeId)?.subtitle || funnelRanges[0]?.subtitle || '';
+
+        const subtitleEl = document.getElementById('mainFunnelSubtitle');
+        if (subtitleEl && subtitle) {
+          subtitleEl.textContent = subtitle;
+        }
+
+        if (!steps.length) {
+          mainContainer.innerHTML = '<p style="color:var(--color-gray-500);font-size:0.9rem;">目前沒有可用的漏斗資料。</p>';
+          return;
+        }
+
+        mainContainer.innerHTML = steps.map((step, index) => {
+          const previousCount = index === 0 ? step.count : steps[index - 1].count;
+          const fromPrevious = previousCount > 0 ? (step.count / previousCount) * 100 : 0;
+          const fromOrigin = steps[0].count > 0 ? (step.count / steps[0].count) * 100 : 0;
+          const converter = `
+            <div class="funnel-step">
+              <div class="funnel-step-info">
+                <span class="funnel-step-label">${step.label}</span>
+                <span class="funnel-step-count">${utils.formatNumber(step.count)}</span>
+              </div>
+              <div class="funnel-step-rate">
+                <strong>${formatPercent(fromPrevious)}</strong>
+                <span>相對上一階段</span>
+                <span style="color:var(--color-gray-500);">累積 ${formatPercent(fromOrigin)}</span>
+              </div>
+            </div>
+          `;
+          const connector = index < steps.length - 1 ? '<div class="funnel-connector"></div>' : '';
+          return converter + connector;
+        }).join('');
+      };
+
+      const renderMiniFunnel = (items, containerId) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!items || !items.length) {
+          container.innerHTML = '<p style="color:var(--color-gray-500);font-size:0.9rem;">暫無資料。</p>';
+          return;
+        }
+
+        container.innerHTML = items.map(item => {
+          const steps = item.steps || [];
+          const firstCount = steps[0]?.count || 0;
+          const lastCount = steps[steps.length - 1]?.count || 0;
+          const overallRate = firstCount > 0 ? (lastCount / firstCount) * 100 : 0;
+          const miniSteps = steps.map((step, index) => {
+            const prev = index === 0 ? step.count : steps[index - 1].count;
+            const rate = prev > 0 ? (step.count / prev) * 100 : 0;
+            const width = Math.max(8, Math.min(rate, 100));
+            const title = `${step.label}：${utils.formatNumber(step.count)} (${formatPercent(rate)})`;
+            return `
+              <div class="mini-funnel-step" title="${title}">
+                <span>${step.label}</span>
+                <div class="mini-funnel-bar"><span style="width:${width}%"></span></div>
+                <span>${formatPercent(rate)}</span>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="mini-funnel-item">
+              <div class="mini-funnel-header">
+                <span>${item.name}</span>
+                <span class="mini-funnel-overall">${formatPercent(overallRate)}</span>
+              </div>
+              <div class="mini-funnel-steps">
+                ${miniSteps}
+              </div>
+            </div>
+          `;
+        }).join('');
+      };
+
+      const updateProductFunnel = (segmentId) => {
+        const segment = funnelProducts.find(seg => seg.id === segmentId) || funnelProducts[0];
+        const subtitle = document.getElementById('productFunnelSubtitle');
+        if (subtitle && segment) {
+          subtitle.textContent = `${segment.label}漏斗`;
+        }
+        renderMiniFunnel(segment?.items || [], 'productFunnelList');
+      };
+
+      const updateCampaignFunnel = (segmentId) => {
+        const segment = funnelCampaigns.find(seg => seg.id === segmentId) || funnelCampaigns[0];
+        const subtitle = document.getElementById('campaignFunnelSubtitle');
+        if (subtitle && segment) {
+          subtitle.textContent = `${segment.label}漏斗`;
+        }
+        renderMiniFunnel(segment?.items || [], 'campaignFunnelList');
+      };
+
+      const defaultFunnelRange = document.querySelector('[data-funnel-range].active')?.dataset.funnelRange || funnelRanges[0]?.id || '7d';
+      renderMainFunnel(defaultFunnelRange);
+
+      const defaultProductSegment = document.querySelector('[data-product-segment].active')?.dataset.productSegment || funnelProducts[0]?.id;
+      if (defaultProductSegment) {
+        updateProductFunnel(defaultProductSegment);
+      }
+
+      const defaultCampaignSegment = document.querySelector('[data-activity-segment].active')?.dataset.activitySegment || funnelCampaigns[0]?.id;
+      if (defaultCampaignSegment) {
+        updateCampaignFunnel(defaultCampaignSegment);
+      }
+
+      const funnelAiInsightList = document.getElementById('funnelAiInsightList');
+      if (funnelAiInsightList) {
+        const funnelGuidelines = guidelines.filter(g => g.category.includes('轉換率'));
+        const funnelTasks = tasks.filter(t => t.category === '轉換率');
+        renderInsightList(funnelAiInsightList, funnelGuidelines, funnelTasks, '目前沒有新的漏斗優化建議。');
+      }
+
+      // === 控制項與互動 ===
+      const dataRangeSelect = document.getElementById('dataRangeSelect');
+      if (dataRangeSelect) {
+        dataRangeSelect.addEventListener('change', (event) => {
+          const labelMap = {
+            'yesterday': '昨天 · 與前一天比較',
+            '30d': '最近 30 天 · 與前 30 天比較',
+            '7d': '最近 7 天 · 與上週同期比較',
+            'custom': '自訂範圍 · 可選擇最多一年'
+          };
+          if (dataRangeLabel) {
+            dataRangeLabel.textContent = labelMap[event.target.value] || labelMap['7d'];
+          }
+        });
+      }
+
+      const dataCustomRangeBtn = document.getElementById('dataCustomRangeBtn');
+      if (dataCustomRangeBtn) {
+        dataCustomRangeBtn.addEventListener('click', () => {
+          window.alert('自訂日期功能即將開放，正式版將提供日期選擇器。');
+        });
+      }
+
+      const setupPillGroup = (selector, callback) => {
+        const buttons = document.querySelectorAll(selector);
+        if (!buttons.length) return;
+        buttons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (typeof callback === 'function') callback(btn);
+          });
+        });
+      };
+
+      setupPillGroup('[data-traffic-source]', (btn) => updateTrafficModule(btn.dataset.trafficSource));
+      setupPillGroup('[data-aov-dimension]', (btn) => updateAovModule(btn.dataset.aovDimension));
+      setupPillGroup('[data-funnel-range]', (btn) => renderMainFunnel(btn.dataset.funnelRange));
+      setupPillGroup('[data-product-segment]', (btn) => updateProductFunnel(btn.dataset.productSegment));
+      setupPillGroup('[data-activity-segment]', (btn) => updateCampaignFunnel(btn.dataset.activitySegment));
+
+      const exportBtn = document.getElementById('dataExportBtn');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          window.alert('匯出功能將在正式版提供，支援 Excel / PDF / 圖片格式。');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
+

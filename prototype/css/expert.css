@@ -1,0 +1,396 @@
+/**
+ * 專家訂閱頁面樣式
+ */
+
+/* ========== 專家訂閱頁面 ========== */
+.expert-subscribe-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: var(--spacing-sm);
+}
+
+.page-subtitle {
+  font-size: 1.125rem;
+  color: var(--color-gray-600);
+}
+
+/* ========== 專家卡片網格 ========== */
+.expert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.expert-card-full {
+  background: white;
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.expert-card-full::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.expert-card-full:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.expert-card-full:hover::before {
+  transform: scaleX(1);
+}
+
+.expert-card-full.expert-subscribed {
+  border-color: var(--color-success);
+  background: linear-gradient(to bottom, rgba(16, 185, 129, 0.05), white);
+}
+
+.expert-card-full.expert-subscribed::before {
+  background: var(--color-success);
+  transform: scaleX(1);
+}
+
+.expert-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.expert-avatar-large {
+  font-size: 4rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-gray-100);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.expert-info-full {
+  flex: 1;
+}
+
+.expert-name-large {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: var(--spacing-xs);
+}
+
+.expert-subtitle-full {
+  font-size: 1rem;
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-sm);
+}
+
+.expert-rating-full {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.rating-stars-large {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-warning);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.rating-count-full {
+  font-size: 0.875rem;
+  color: var(--color-gray-500);
+}
+
+.expert-description-full {
+  font-size: 1rem;
+  color: var(--color-gray-700);
+  line-height: 1.7;
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.expert-features-full {
+  margin-bottom: var(--spacing-lg);
+}
+
+.features-title-full {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.features-title-full::before {
+  content: '✨';
+  font-size: 1.25rem;
+}
+
+.features-list-full {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.features-list-full li {
+  font-size: 0.9375rem;
+  color: var(--color-gray-700);
+  padding-left: var(--spacing-lg);
+  position: relative;
+  line-height: 1.6;
+}
+
+.features-list-full li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-success);
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.expert-pricing-full {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid var(--color-gray-200);
+  margin-top: auto;
+}
+
+.pricing-amount-full {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+}
+
+.price-value-large {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.price-period-full {
+  font-size: 1rem;
+  color: var(--color-gray-600);
+}
+
+.expert-subscribe-btn-full {
+  min-width: 140px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 1rem;
+}
+
+.expert-card-full.expert-subscribed .expert-subscribe-btn-full {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  cursor: not-allowed;
+}
+
+.expert-tag {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* ========== 訂閱確認 Modal ========== */
+.modal-large {
+  max-width: 600px;
+}
+
+.subscribe-summary {
+  padding: var(--spacing-lg);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.subscribe-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.subscribe-summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  font-size: 0.9375rem;
+  color: var(--color-gray-700);
+}
+
+.summary-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+.subscribe-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  margin-top: var(--spacing-md);
+  border-top: 2px solid var(--color-gray-300);
+}
+
+.total-label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+.total-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.subscribe-note {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-blue-50);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-primary);
+}
+
+/* ========== 專家建議區塊（用於流量詳情） ========== */
+.expert-advice-section {
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(147, 51, 234, 0.05));
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-gray-200);
+}
+
+.expert-advice-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.expert-advice-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.expert-advice-content {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.advice-item {
+  padding: var(--spacing-md);
+  border-left: 3px solid var(--color-primary);
+  background: var(--color-gray-50);
+  margin-bottom: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+.advice-item:last-child {
+  margin-bottom: 0;
+}
+
+.advice-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.advice-text {
+  font-size: 0.9375rem;
+  color: var(--color-gray-700);
+  line-height: 1.6;
+}
+
+.expert-advice-action {
+  text-align: center;
+}
+
+.expert-advice-action .btn {
+  margin: 0 auto;
+}
+
+/* ========== 響應式設計 ========== */
+@media (max-width: 768px) {
+  .expert-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .expert-card-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .expert-pricing-full {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+
+  .expert-subscribe-btn-full {
+    width: 100%;
+  }
+}

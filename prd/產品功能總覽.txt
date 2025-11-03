@@ -1,0 +1,142 @@
+⚙️ AI 營運顧問系統 — 產品功能總覽與 MVP 定義
+
+檔案版本： v1.0
+檔名： 03_Feature_Specification.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive 產品部門
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案明確定義 AI 營運顧問系統的功能模組（Features）、優先級、驗證假設與成功指標。
+其核心目標為：
+
+讓團隊在 MVP 階段可於 8–10 週內完成一個可運作、可驗證商業價值的產品版本。
+
+2️⃣ 系統功能地圖（Feature Map）
+graph TD
+  A[AI 營運顧問系統] --> B[數據整合模組 Data Integration]
+  A --> C[營運儀表板 Dashboard]
+  A --> D[Guideline 智能建議模組]
+  A --> E[行動任務清單 Action Queue]
+  A --> F[報告與通知模組 Reports & Alerts]
+  A --> G[管理與安全模組 Admin & Security]
+
+3️⃣ 功能模組說明（Feature Modules Overview）
+🧩 模組一：數據整合模組（Data Integration）
+
+功能描述：
+自動整合多來源資料（Shopline / Cyberbiz / GA4 / 廣告平台），每日更新至 BigQuery。
+
+子功能	說明	技術依賴	優先級	驗證假設
+資料匯入 API	每日自動拉取 Shopline / GA4 資料	BigQuery + Cloud Scheduler	★★★★★	匯入成功率 ≥95%
+時區轉換	將 UTC 轉換為 Asia/Taipei	Dataform or SQL	★★★☆☆	資料一致性無誤
+異常檢查	檢測資料遺漏與錯誤筆數	BigQuery UDF	★★★☆☆	每日自動報警成功
+
+輸出結果：
+
+BQ 中建立標準化資料表
+
+orders、customers、products、events
+
+每日凌晨更新完成，前端可直接查詢最新數據
+
+📊 模組二：營運儀表板（Dashboard）
+
+功能描述：
+以營收公式（流量 × 轉換率 × 客單價）為核心，呈現全站營運概況與流量來源差異。
+
+子功能	說明	技術依賴	優先級	驗證假設
+營收總覽卡	顯示營收與達成率	React + Tailwind	★★★★★	使用者能於10秒內理解營收現況
+KPI 分解金字塔	顯示流量、CVR、AOV	Chart.js / Recharts	★★★★★	使用者可描述三項指標關係
+七大流量策略表	分析搜尋、廣告、社群等	GA4 + BQ Query	★★★★☆	能辨識出問題來源
+轉換漏斗	顯示 view_item → purchase	GA4 事件數據	★★★★☆	可視化掉落率改善討論
+商品結構卡	顯示熱銷品與客單價分佈	BQ + Visualization	★★★☆☆	可識別高價商品比例變化
+
+關鍵使用場景：
+營運經理週會時打開，快速講解本週營收變化與問題點。
+
+💡 模組三：Guideline 智能建議（AI-Driven Recommendation）
+
+功能描述：
+根據 KPI 落差與事件資料，自動生成具體營運建議（Guideline）。
+可採混合邏輯：Rule-based + LLM 自然語言建議。
+
+子功能	說明	技術依賴	優先級	驗證假設
+指標監測規則	設定 KPI 異常門檻（例：下降>10%）	SQL Rule Engine	★★★★★	能自動偵測異常
+建議範本生成	根據異常類型對應文字建議	Prompt Template	★★★★☆	建議與情境相關性 ≥70%
+LLM 自動補強	使用 AI.GENERATE_TEXT_FROM_TABLE 產出自然語言	BigQueryML / OpenAI API	★★★☆☆	文案可讀性高於人工版
+建議分類	將建議歸入流量 / 轉換 / 商品 / 會員類別	系統自動標籤	★★★★☆	使用者能快速找到對應區域
+
+輸出格式範例：
+
+{
+  "category": "轉換率",
+  "insight": "轉換率下降 0.3%，主要出現在廣告流量。",
+  "suggestion": "建議調整 Meta Ads 受眾，聚焦最近14天訪客。"
+}
+
+🧾 模組四：行動任務清單（Action Queue）
+
+功能描述：
+將 Guideline 轉為任務，可設定負責人、截止日與執行狀態。
+
+子功能	說明	技術依賴	優先級	驗證假設
+任務建立	由 Guideline 一鍵生成	React + Firestore / BQ	★★★★★	70% 使用者會建立任務
+任務狀態追蹤	未開始 / 進行中 / 完成	React 狀態管理	★★★★☆	任務完成率 ≥60%
+任務同步	匯出至 Google Sheet 或 CRM	Google API	★★★☆☆	顧問能整合追蹤表
+通知與提醒	到期前發出提醒	LINE API / Email	★★☆☆☆	提醒成功率 ≥90%
+
+使用情境：
+
+營運經理週會中建立「調整 Meta Ads 受眾」任務 → 指派給行銷部 → 下週檢討。
+
+📅 模組五：報告與通知（Reports & Alerts）
+
+功能描述：
+週期性生成報告摘要，透過 LINE Bot 或 Email 推播至使用者。
+
+子功能	說明	技術依賴	優先級	驗證假設
+自動週報產出	每週一 09:00 匯總上週數據	Dataform + Scheduler	★★★★☆	自動生成成功率 ≥95%
+LINE 通知	傳送摘要與登入連結	LINE Notify API	★★★☆☆	點擊率 ≥60%
+PDF 匯出	可下載完整報告	ReportLab / Node-pdfkit	★★☆☆☆	檔案生成穩定性
+
+報告摘要樣例：
+
+📊 營收：NT$825,000（↓8.4%）
+🔍 主因：廣告流量下降 12%，轉換率 -0.3%
+💡 建議：重新設定 Meta Ads 受眾、推出入門組合包
+
+🔒 模組六：管理與安全（Admin & Security）
+子功能	說明	技術依賴	優先級	驗證假設
+使用者登入	Email / OAuth 登入（Google）	Firebase Auth / OAuth 2.0	★★★★★	登入成功率 ≥99%
+權限控管	Admin / 顧問 / 客戶端	Role-based Access	★★★★☆	權限誤用率 <1%
+資料隔離	不同品牌分開存取 BQ 資料集	BQ IAM	★★★★★	無跨客戶讀取事件
+4️⃣ MVP 範圍與優先級矩陣
+模組	MVP 是否納入	優先級	理由
+數據整合模組	✅	P1	系統核心基礎
+營運儀表板	✅	P1	主要使用者入口
+Guideline 智能建議	✅	P1	系統差異化核心
+行動任務清單	✅	P2	實現閉環行動追蹤
+報告與通知	✅（簡版）	P2	提升留存與黏性
+管理與安全	✅	P1	必須的登入與權限保護
+5️⃣ 技術架構簡述（Tech Stack Summary）
+層級	技術選擇	說明
+前端	Next.js + Tailwind + Recharts	儀表板與互動區塊
+後端	Node.js + Express (API Gateway)	提供前端查詢介面
+資料層	BigQuery + Dataform	數據整合、轉換與指標計算
+AI 模組	BigQuery ML + OpenAI API	生成自然語言建議
+認證安全	Firebase Auth + OAuth 2.0	帳號管理與權限控管
+通知通道	LINE API + Gmail API	自動推播週報
+部署	GCP Cloud Run + IAM	容器化部署與權限隔離
+6️⃣ 驗證假設（Validation Hypothesis）
+類型	驗證問題	成功條件	驗證方式
+可用性	使用者是否能快速理解營運狀況？	≥80% 使用者能口述原因與對策	可用性測試
+價值性	是否減少人工報表時間？	平均節省 ≥50% 分析時間	使用者訪談
+可行性	API 匯入穩定度足夠嗎？	匯入成功率 ≥95%	系統監控記錄
+成長性	使用者會持續登入嗎？	週活 ≥70%	GA4 登入事件分析
+7️⃣ 未來延伸模組（Post-MVP Ideas）
+模組名稱	說明	預計版本
+Benchmark 模式	與同產業平均比較指標	v1.1
+AI 自動任務生成	LLM 自動判斷建議優先順序	v1.2
+行銷活動模擬器	模擬廣告預算變化對營收影響	v1.3
+多品牌帳號分析	顧問端可切換不同客戶	v2.0

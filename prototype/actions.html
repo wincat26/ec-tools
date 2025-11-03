@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行動方案 - AI 營運顧問系統</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navigation.css">
+</head>
+<body>
+  <!-- 主導航欄 -->
+  <nav class="main-navigation">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="dashboard.html" class="nav-logo">
+          AI 營運顧問
+        </a>
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="dashboard.html" class="nav-link" id="nav-dashboard" data-page="dashboard">
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="data.html" class="nav-link" id="nav-data" data-page="data">
+              <span class="nav-text">數據分析</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="insights.html" class="nav-link" id="nav-insights" data-page="insights">
+              <span class="nav-text">洞察中心</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="actions.html" class="nav-link active" id="nav-actions" data-page="actions">
+              <span class="nav-text">行動方案</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="consultants.html" class="nav-link" id="nav-consultants" data-page="consultants">
+              <span class="nav-text">角色/顧問</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="reports.html" class="nav-link" id="nav-reports" data-page="reports">
+              <span class="nav-text">報告</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="settings.html" class="nav-link" id="nav-settings" data-page="settings">
+              <span class="nav-text">設定</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="brand-selector-nav">
+          <select class="brand-select-nav" id="brandSelectNav">
+            <option>品牌：豆油伯</option>
+          </select>
+        </div>
+        <div class="user-menu-nav">
+          <div class="user-avatar-nav">👤</div>
+          <span class="user-email-nav" id="userEmailNav">demo@reddoor.com</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 頁面標題 -->
+  <section class="page-header-section">
+    <div class="page-header-content">
+      <h1 class="page-title">行動方案</h1>
+      <p class="page-subtitle">與 task 清單連動的執行管理，追蹤任務進度與建議優先級</p>
+      <div class="page-actions">
+        <button class="btn btn-primary">＋ 新增任務</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主要內容 -->
+  <main class="main-content">
+    <div class="container">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 行動清單管理 -->
+        <div class="card lg:col-span-2">
+          <div class="card-header">
+            <h2 class="card-title">📋 行動清單管理</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">🔧</div>
+              <h3>功能開發中</h3>
+              <p>即將推出：任務列表（未開始/進行中/已完成）、優先級標記、任務指派與時間線</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 建議優先級 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">🎯 建議優先級</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">🔧</div>
+              <h3>功能開發中</h3>
+              <p>即將推出：AI 建議的優先級排序、建議來源標記</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 任務模板 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📝 任務模板/推薦</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">🔧</div>
+              <h3>功能開發中</h3>
+              <p>即將推出：常見任務模板庫、AI 推薦的任務模板</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 進度追蹤 -->
+        <div class="card lg:col-span-3">
+          <div class="card-header">
+            <h2 class="card-title">📊 進度追蹤</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">🔧</div>
+              <h3>功能開發中</h3>
+              <p>即將推出：任務完成度圖表、里程碑追蹤、預期 vs 實際進度</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script src="js/utils.js"></script>
+  <script src="js/navigation.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,186 @@
+AI 營運顧問系統 — 資料治理與品質標準
+
+檔案版本： v1.0
+檔名： 10_Data_Governance_And_Quality_Standard.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive Data Governance Committee
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案旨在建立一套可持續維護的 資料治理框架（Data Governance Framework），
+以確保資料在 準確性（Accuracy）、一致性（Consistency）、完整性（Integrity）、
+以及 可用性（Availability） 四個層面上達到企業標準。
+
+最終目標：
+
+讓所有資料都能被正確理解、有效運用、持續優化。
+
+2️⃣ 資料治理原則（Governance Principles）
+原則	說明
+一致性（Consistency）	所有資料欄位、命名、單位與時區皆統一。
+可追溯性（Traceability）	每筆資料的來源、轉換、更新時間都可被追蹤。
+最小權限（Least Privilege）	僅授權必要人員操作敏感資料。
+版本可控（Version Control）	所有資料模型、表結構與轉換邏輯皆有版本紀錄。
+跨部門可理解（Transparency）	非工程人員也能閱讀資料字典並理解其意義。
+3️⃣ 資料管理角色與責任（Roles & Responsibilities）
+角色	職責	所屬單位
+Data Owner	定義資料資產、存取策略、授權層級	產品部 / PMO
+Data Steward	維護資料品質、欄位定義與資料字典	Data Team
+Data Engineer	維護資料管線與架構、修正異常	Data Infrastructure
+Data Consumer	使用資料進行分析或決策	顧問 / PM / 客戶端
+Compliance Officer	稽核與個資安全檢查	ISMS 組
+4️⃣ 資料架構與層級（Data Layer Architecture）
+flowchart TD
+  A[Raw Data Layer] --> B[Staging Layer]
+  B --> C[Processed / Core Layer]
+  C --> D[Analytics Layer]
+  D --> E[Application / AI Layer]
+
+層級	命名慣例	更新頻率	說明
+Raw	raw_*	每日	來源原始資料（不可修改）
+Staging	stg_*	每日	清洗後暫存，具時區轉換與欄位對齊
+Processed / Core	lv0_*, processed_*	每日	統一格式的核心分析表
+Analytics	view_*, summary_*	動態	報表用聚合結果
+Application / AI	guideline_*, task_*	每週	提供系統與 AI 模型使用
+5️⃣ 命名規範（Naming Conventions）
+資料集（Dataset）
+{project}_{domain}
+範例：
+datalake360-joyfarm.cdp_data
+datalake360-saintpaul.analytics_409421128
+
+資料表（Table）
+層級_主體_用途
+例：
+lv0_orders
+processed_daily_summary
+view_task_performance
+
+欄位命名（Field Naming）
+類型	命名規範	範例
+主鍵	{entity}_id	order_id, customer_id
+外鍵	{related}_id	brand_id, product_id
+數值欄位	小寫 + 度量單位	revenue_twd, cost_usd
+時間欄位	UTC 或明確時區	created_at_utc, updated_at_tpe
+Boolean	is_ 開頭	is_active, is_deleted
+6️⃣ 資料品質管理（Data Quality Management）
+維度	驗證項目	驗證方式	預期標準
+完整性 (Completeness)	Null 欄位檢查	COUNTIF(IS NULL)	< 1%
+準確性 (Accuracy)	指標值比對	手動與系統比對誤差	±3%
+一致性 (Consistency)	欄位命名與單位	Schema Compare	一致
+時效性 (Timeliness)	延遲時間	Dataform Job Duration	< 6 小時
+唯一性 (Uniqueness)	主鍵重複率	COUNT(DISTINCT id) vs COUNT(*)	100% 唯一
+7️⃣ 資料驗證機制（Validation & Automation）
+
+每次 Dataform 任務執行後，系統會自動執行驗證腳本：
+
+ASSERT (
+  SELECT COUNT(*) FROM processed.daily_summary
+  WHERE revenue_twd IS NULL
+) = 0
+OPTIONS(description="Revenue 不可為空");
+
+自動驗證項目：
+
+欄位完整性檢查
+
+主鍵唯一性檢查
+
+欄位型態與 Schema 檢查
+
+異常變化警示（例如營收波動 > ±50%）
+
+8️⃣ 資料版本控管（Version Control & Change Management）
+項目	實作方式
+SQL / Dataform 腳本	Git 版控（branch = feature/dataflow_name）
+Schema 版本	schema_version 欄位標記
+結構變更	Pull Request + 審核流程
+重大更新	寫入 data_change_log 表（含時間、操作者、內容）
+CREATE TABLE processed.data_change_log (
+  change_id STRING,
+  change_type STRING,
+  author STRING,
+  description STRING,
+  timestamp TIMESTAMP
+);
+
+9️⃣ 異常與錯誤修正流程（Data Issue & Remediation Process）
+sequenceDiagram
+  participant Monitor as Data Monitor
+  participant Steward as Data Steward
+  participant Engineer as Data Engineer
+  participant PM as Product Manager
+
+  Monitor->>Steward: 發現資料異常（自動或人工）
+  Steward->>Engineer: 開立修正工單
+  Engineer-->>Steward: 修正完成並更新版本
+  Steward->>PM: 提交修正報告
+  PM-->>Monitor: 驗證數據恢復正常
+
+分級原則
+等級	定義	修正時限
+Critical	指標錯誤導致報表或決策異常	即時修正
+High	多表資料錯位、時區錯誤	24 小時內
+Medium	欄位缺失 / 格式錯誤	3 天內
+Low	非關鍵欄位或文檔錯誤	7 天內
+🔟 資料字典與欄位標準（Data Dictionary）
+
+每個核心表格皆有一份 JSON / Markdown 格式的資料字典，存放於 Git：
+
+{
+  "table": "processed.daily_summary",
+  "fields": [
+    { "name": "date", "type": "DATE", "desc": "統計日期" },
+    { "name": "brand_id", "type": "STRING", "desc": "品牌識別碼" },
+    { "name": "revenue_twd", "type": "FLOAT64", "desc": "營收金額（新台幣）" },
+    { "name": "sessions", "type": "INT64", "desc": "流量 Sessions 數" },
+    { "name": "conversion_rate", "type": "FLOAT64", "desc": "轉換率" },
+    { "name": "avg_order_value", "type": "FLOAT64", "desc": "平均客單價" }
+  ]
+}
+
+11️⃣ 資料存取與共享政策（Data Access Policy）
+類別	存取權限	方式
+內部資料（RedDoor）	只限經授權帳號	IAM + VPN
+客戶品牌資料	僅限對應品牌用戶	BigQuery IAM / brand_id 隔離
+AI 訓練資料	經匿名化處理後才可匯出	PII Masked 模式
+報表與視覺化資料	可透過 Looker / API 提取	讀取權限僅限 viewer
+12️⃣ 資料生命週期管理（Data Lifecycle Management）
+階段	說明	保留期限
+收集（Collect）	從 API / GA4 匯入原始資料	90 天
+處理（Transform）	清洗與轉換至 Processed 層	180 天
+分析（Analyze）	提供報表與 AI 模型使用	1 年
+歸檔（Archive）	匯出壓縮存檔	3 年
+刪除（Purge）	超過保存期限自動刪除	系統自動執行
+13️⃣ 資料治理儀表板（Governance Dashboard）
+flowchart LR
+  A[Dataform ETL Logs]
+  A --> B[Data Quality Report]
+  B --> C[Completeness 指標]
+  B --> D[Timeliness 指標]
+  B --> E[Accuracy 檢查]
+  B --> F[Schema Compare]
+  C --> G[Governance Dashboard / Looker]
+
+儀表板核心指標
+指標	說明	目標值
+完整率	非 Null 欄位佔比	≥ 99%
+延遲率	ETL 成功率	≥ 95%
+一致率	Schema 無變動錯誤	100%
+版本覆蓋率	所有核心表皆有版本標記	100%
+14️⃣ 教育與落地（Training & Implementation）
+
+每位新進工程師需完成「資料品質維護課程」
+
+Data Steward 每月舉辦一次 Data Hygiene Workshop
+
+每季度更新一次《資料命名與欄位規範白皮書》
+
+透過 Looker Studio 自動顯示「資料健康分數（Data Health Score）」
+
+✅ 摘要（Executive Summary）
+
+資料治理不僅是技術層面的維護，更是品牌信任的基石。
+本標準將 RedDoor 的 Datalake、生態夥伴 API、與 AI 分析模組整合於同一治理框架，
+以「命名一致、版本可控、品質可驗證」為原則，
+讓每一份報告、每一條 AI 建議、每一個決策都能站在可信的資料上。

@@ -1,0 +1,172 @@
+AI 營運顧問系統 — 產品營運成效與目標衡量框架
+
+檔案版本： v1.0
+檔名： 11_Product_Metrics_And_Goal_Framework.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive Product & Growth Team
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案旨在定義 AI 營運顧問系統的核心指標架構（Product Metrics Framework），
+以衡量產品對「客戶營運成效」與「產品自身成長」的雙重貢獻。
+
+目標：
+
+將 行為資料（Behavior Data） 與 營運成果（Business Impact） 連結。
+
+建立可衡量的產品週期指標（Activation → Adoption → Retention → Impact）。
+
+形成一個持續優化的 Growth Loop。
+
+2️⃣ 總覽架構（Metrics Framework Overview）
+flowchart TD
+  A[使用者行為] --> B[產品採納指標]
+  B --> C[任務執行指標]
+  C --> D[營運成效指標]
+  D --> E[商業成果指標]
+  E --> F[回饋 → AI 模型優化]
+
+指標層級	核心問題	指標類型
+Adoption	有多少品牌在使用？	使用者與登入率
+Activation	使用者是否成功建立第一個任務？	首次行動轉化率
+Engagement	使用者多久回來一次？	週活 / 月活、任務互動率
+Impact	他們是否真的改善營運績效？	成效提升率、任務影響度
+Retention	他們會持續使用嗎？	週期留存率、功能黏著度
+Revenue	對客戶營收與公司收益的影響？	ARPU、品牌留存營收
+3️⃣ 北極星指標（North Star Metric, NSM）
+
+🌟 NSM：Guideline 採納後帶來的營收改善率
+
+公式：
+
+NSM = (採納後營收 - 採納前營收) / 採納前營收 × 採納任務數
+
+
+定義：
+衡量系統是否能真正幫助品牌「透過 AI 建議 → 任務執行 → 營收提升」。
+這是一個結合使用行為與商業成果的綜合性指標。
+
+4️⃣ 關鍵指標層級（KPI Hierarchy）
+graph LR
+  A[NSM: 採納後營收改善率]
+  A --> B1[採納率 Adoption Rate]
+  A --> B2[任務完成率 Task Completion Rate]
+  A --> B3[成效提升率 Impact Uplift]
+  A --> B4[品牌留存率 Brand Retention]
+
+層級	指標名稱	定義	目標值
+📈 Level 1	NSM：採納後營收改善率	平均每任務營收成長幅度	+8% / 月
+🧠 Level 2	採納率	被採納之 AI 建議 / 全部建議	≥ 60%
+⚙️ Level 3	任務完成率	完成任務 / 建立任務	≥ 70%
+💡 Level 4	成效提升率	有正面改善之任務比例	≥ 50%
+💎 Level 5	品牌留存率	仍持續使用的品牌比例（季度）	≥ 85%
+5️⃣ Growth Loop — 成長循環模型
+flowchart TD
+  A[使用者採納 AI 建議]
+  A --> B[產生任務並執行]
+  B --> C[成效資料回饋]
+  C --> D[AI 模型再訓練]
+  D --> E[建議更準確 → 使用者信任提升]
+  E --> F[採納率上升 → 營收提升]
+  F --> A
+
+
+每一次任務完成與成效回饋，
+都會讓模型的「準確率」與「建議採納率」持續上升，
+形成產品自我強化的成長飛輪。
+
+6️⃣ 指標定義與量測方法（Metrics Definition & Measurement）
+指標	定義	資料來源	計算邏輯
+Adoption Rate	每週首次登入的活躍品牌數 / 全品牌數	auth_login	COUNT(DISTINCT brand_id)
+Activation Rate	有建立首個任務的使用者數 / 全登入使用者	task_create	COUNTIF(first_task=TRUE) / total_users
+Task Completion Rate	已完成任務數 / 建立任務數	task_complete	COUNT(task_complete)/COUNT(task_create)
+Impact Uplift	完成任務後 KPI 改善比例	task_performance	AVG(impact_score WHERE impact_score>0)
+Guideline Adoption Rate	加入任務的 Guideline / 全 Guideline	guideline_add_task	COUNT(*) / total_guidelines
+Brand Retention Rate	活躍品牌 / 前期品牌	brand_activity_log	Active_brands_t / Active_brands_t-1
+Revenue Growth	使用系統品牌平均營收成長	processed.daily_summary	ΔRevenue per brand
+7️⃣ 使用者層級指標（User-Level Metrics）
+類型	指標名稱	目標值	意義
+行為	平均登入頻率	≥ 2 次 / 週	系統黏著度
+行為	Guideline 開啟率	≥ 70%	對建議信任程度
+行為	任務新增率	≥ 1.2 任務 / 使用者 / 週	使用深度
+成效	任務成效提升率	≥ 50% 有正報酬	功能價值
+滿意度	建議評分	≥ 4.0 / 5	AI 溝通品質
+8️⃣ 品牌層級指標（Brand-Level Metrics）
+指標名稱	說明	衡量方式	預期值
+平均營收成長率	使用系統品牌營收平均成長	月比上月平均成長幅度	≥ 5%
+品牌留存率	持續登入與回報的品牌比例	每季留存分析	≥ 85%
+任務採納率	被品牌實際執行的建議比例	任務執行統計	≥ 60%
+顧問協作指標	顧問參與任務數佔比	顧問與品牌協作記錄	≥ 40%
+9️⃣ AI 模型效能指標（AI Model Performance Metrics）
+指標	定義	目標值	評估週期
+建議信心分數平均值 (Confidence Score)	模型產出建議的平均置信度	≥ 0.85	每週
+AI 建議採納率	使用者實際採納建議比例	≥ 60%	每週
+建議準確率 (Accuracy)	顧問人工審查一致率	≥ 80%	每月
+語意流暢度 (Fluency Score)	NLP 自動評分	≥ 90	每週
+學習收斂速率 (Model Convergence)	成效收斂的 epoch 數	< 10 次	每次更新
+🔟 商業層級指標（Business Metrics）
+KPI	說明	目標
+ARPU (每品牌平均營收)	系統產生的顧問或 SaaS 收益平均	NT$25,000 / 月
+品牌續約率 (Renewal Rate)	當季到期客戶續約比例	≥ 90%
+付費轉換率 (Free → Paid)	試用轉正式用戶比例	≥ 40%
+顧問輔助比率	顧問參與任務總數 / 全任務總數	≥ 50%
+毛利率 (Gross Margin)	收入 − 成本 / 收入	≥ 60%
+11️⃣ 儀表板視覺化層（Product Performance Dashboard）
+flowchart LR
+  A[User Behavior Logs]
+  A --> B1[Usage Metrics Panel]
+  A --> B2[Guideline Adoption Panel]
+  B1 --> C1[Activation Funnel Chart]
+  B2 --> C2[Adoption Heatmap]
+  C1 --> D1[Growth KPI Summary]
+  C2 --> D2[Impact Trend]
+  D1 & D2 --> E[North Star Metric Tracker]
+
+Dashboard 模組建議
+模組	圖表類型	主要用途
+使用者行為	折線圖 / 熱度圖	登入與互動變化
+採納與任務漏斗	漏斗圖	觀察採納轉化率
+成效趨勢	趨勢線圖	任務對營收貢獻
+品牌成長比較	分群長條圖	顯示不同客戶群效益
+AI 準確度監控	雷達圖	模型表現分析
+12️⃣ 產品健康度指標（Product Health Metrics）
+類別	指標	目標值	意義
+使用	DAU / WAU	> 0.3	活躍使用比例
+使用	月活品牌數	+5% MoM	成長趨勢
+產品	任務錯誤率	< 1%	系統穩定性
+產品	資料延遲時間	< 6 小時	可用性
+成效	平均 Impact Score	> +6%	實際成長
+滿意度	NPS	> 40	使用者推薦意願
+13️⃣ 週期性回顧與優化流程（Performance Review Loop）
+sequenceDiagram
+  participant PM as Product Manager
+  participant Data as Data Analyst
+  participant AI as AI Team
+  participant Ops as Consultant Team
+
+  PM->>Data: 拉取產品週報 (Metrics Dashboard)
+  Data-->>PM: 輸出採納率 / 成效報告
+  PM->>AI: 指定改進模型 (低採納建議)
+  PM->>Ops: 討論高效任務案例
+  Ops-->>PM: 回報品牌成效
+  PM-->>All: 形成下週優化策略
+
+14️⃣ 目標設定框架（OKR Alignment）
+目標 (Objective)	關鍵成果 (Key Results)	量測方式
+🎯 提升 AI 建議採納率	KR1：Guideline 採納率達 60%
+KR2：AI 建議信心分數 ≥ 0.85	BigQuery / Dashboard
+🚀 提高品牌營收改善幅度	KR1：任務平均 Impact Score ≥ +8%
+KR2：品牌月營收提升 ≥ 5%	成效報告
+🤝 強化顧問協作	KR1：顧問任務參與率 ≥ 50%
+KR2：品牌滿意度 ≥ 4.2	Firebase / Survey
+🔄 穩定產品留存	KR1：季度品牌留存率 ≥ 85%
+KR2：週活比 DAU/WAU ≥ 0.3	活躍分析
+✅ 摘要（Executive Summary）
+
+本產品衡量框架以 「採納率 × 成效 × 留存」 為核心，
+建立了從行為數據到營運成果的完整閉環。
+北極星指標（NSM）聚焦於「AI 建議是否真正帶來營收提升」，
+而週期性成效回饋則讓產品、AI 模型與顧問服務形成協作的成長飛輪。
+
+最終目標是讓 RedDoor 的 AI 營運顧問成為「可量化價值」的 SaaS 與顧問融合產品，
+讓每一項洞察都能轉化為品牌實際的成長動能。

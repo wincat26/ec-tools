@@ -1,0 +1,146 @@
+AI 營運顧問系統 — 資訊安全與權限控管規範
+
+檔案版本： v1.0
+檔名： 09_Security_And_Permission_Policy.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive ISMS Committee
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案旨在建立一套適用於 B2B AI 營運顧問系統 的資訊安全政策與權限控管規範，以達成以下目標：
+
+確保 品牌間資料隔離、避免資料洩漏
+
+建立 可審計、可追蹤 的操作紀錄
+
+保護 雲端儲存（BigQuery / Firebase） 安全
+
+符合 ISO 27001 與 GDPR 原則
+
+支援 客戶稽核、權限管理、與事故應變
+
+2️⃣ 安全治理架構（Security Governance Model）
+graph TD
+  A[ISMS Policy] --> B[Access Control]
+  A --> C[Data Protection]
+  A --> D[API Security]
+  A --> E[Audit & Incident Management]
+  B --> B1[IAM & RBAC]
+  C --> C1[Data Encryption & Masking]
+  D --> D1[Authentication & Rate Limit]
+  E --> E1[Logging & Compliance]
+
+3️⃣ 權限角色設計（Role-Based Access Control, RBAC）
+角色	權限層級	可操作項目
+系統管理員 (Admin)	最高	建立/刪除品牌專案、管理 IAM 角色、API 金鑰設定
+顧問 (Consultant)	中高	檢視所有客戶報表、建立 Guideline、審核任務成效
+品牌營運人員 (Merchant Operator)	中	編輯任務、設定 KPI、檢視自家數據
+品牌負責人 (Brand Owner)	中低	檢視報告、下載週報、授權顧問存取
+一般使用者 (Viewer)	只讀	檢視 Dashboard 與 Guideline 內容
+權限維度
+
+橫向隔離： 以 brand_id 為主要隔離鍵（查詢層加上 WHERE brand_id = user.brand_id）
+
+縱向分級： 按職責劃分可見欄位與操作（Admin 可改 API，Viewer 僅可讀）
+
+4️⃣ 身份驗證與授權機制（Authentication & Authorization）
+項目	機制	實作
+使用者登入	Google OAuth 2.0	Firebase Auth with SSO
+API 授權	JWT Token	每次請求於 Header 驗證 Token 有效性
+資料查詢限制	Service Account + IAM	每個 brand 專案獨立 SA 權限
+Session 控制	Token 時效 7 天 + 自動續期	失效時重新登入
+
+安全原則：
+
+所有前端呼叫一律經由 API Gateway（禁止直連 BigQuery）
+
+Token 需內含 user_id, brand_id, role 資訊
+
+5️⃣ 資料隔離與儲存策略（Data Isolation & Storage）
+層級	措施	實作方式
+BigQuery	每品牌專案資料集命名規則 project_brandid_*	IAM 僅限對應 brand Service Account 存取
+Firestore	依 brand_id 設子集合	tasks/{brand_id}/items
+Cloud Storage	檔案隔離 → 不同品牌不同 bucket	加上 Object-Level ACL
+AI 模型	Prompt 與 輸出 Log 加密	AES-256 靜態加密
+6️⃣ 加密與遮蔽（Encryption & Masking）
+類別	加密層級	說明
+靜態資料（At Rest）	AES-256 加密	BigQuery / Cloud Storage 預設啟用
+傳輸資料（In Transit）	TLS 1.3 強制	所有 API 與 前端 HTTPS
+敏感資訊欄位	假名化 / 遮蔽 (PII Masking)	例：user_email → u***@domain.com
+機密金鑰	Secret Manager 集中管理	僅限 Admin 與 CICD Pipeline 可存取
+7️⃣ API 安全政策（API Security Policy）
+項目	安全措施
+API Gateway	驗證 JWT + 限制 IP 範圍
+Rate Limit	每 IP 每分鐘 300 請求上限
+CORS 策略	僅允許公司網域來源
+請求日誌	自動寫入 api_request_log 表
+錯誤攔截	統一 HTTP 錯誤回傳結構 {code,message,trace_id}
+8️⃣ 審計與日誌管理（Audit & Logging）
+flowchart LR
+  A[User Action] --> B[Audit Logger]
+  B --> C[BigQuery audit_log table]
+  C --> D[Looker 監控儀表板]
+  D --> E[異常警報 Slack Webhook]
+
+日誌類型	儲存位置	保留期限
+系統登入 / 登出	Firebase Auth Log	1 年
+API 存取	BigQuery api_request_log	1 年
+資料查詢	BigQuery Audit Log	2 年
+錯誤與異常	Cloud Logging	6 個月
+
+異常通報流程
+
+當觸發高風險操作（批次刪除、權限變更） → 即時 Slack 通知
+
+每週 PM 審閱 Audit 報告
+
+發現疑慮 → 開立 Security Incident Ticket（追蹤 JIRA）
+
+9️⃣ 資料訪問與稽核程序（Data Access & Audit）
+項目	原則
+臨時存取	顧問需提出 Access Request 並經 PM 核准
+外部資料下載	僅可匯出 PDF / CSV 摘要，不可提供原始表
+稽核週期	每季度進行 IAM Role 審查
+稽核紀錄	由 Security Officer 存放於 Cloud Storage / Audit 資料夾
+🔟 合規與標準（Compliance & Standards）
+準則	狀態	涵蓋範圍
+ISO 27001	進行中	資料治理 / 風險管理 / 稽核
+GDPR	部分遵循	歐盟客戶 PII 資料遮蔽
+個資法（台灣）	完全遵循	會員資料 / 電子報 / 營銷用途
+Cloud Security Alliance (CSA)	參考中	雲端服務供應鏈安全
+11️⃣ 安全事件通報流程（Incident Response Workflow）
+sequenceDiagram
+  participant User as 使用者
+  participant System as AI 顧問系統
+  participant SecOps as Security Team
+  participant Admin as 管理者
+
+  User->>System: 回報異常或可疑活動
+  System-->>SecOps: 自動生成 Incident Ticket
+  SecOps->>Admin: 評估嚴重性與影響
+  Admin-->>SecOps: 採取措施（暫停帳號 / 停用 API Key）
+  SecOps-->>System: 更新狀態並通知所有受影響帳號
+
+12️⃣ 風險分類與緊急應對矩陣（Risk Matrix）
+風險類型	影響等級	處理時限	應對措施
+未授權存取	高	1 小時內	鎖定 Token + 封鎖 IP
+數據洩漏	高	立即	啟動 Incident Response Plan
+API 濫用	中	4 小時內	啟動 Rate Limit 與 黑名單機制
+登入異常	中	1 天內	通知使用者重設密碼
+程式漏洞	中低	3 天內	提交 Patch 修復並更新版本
+13️⃣ 安全審核與持續改進（Security Review & Continuous Improvement）
+
+每半年進行 Penetration Test（滲透測試）
+
+每季度審視 Service Account 使用狀況
+
+每月檢查 API Key 有效性與過期名單
+
+建立 Security Change Log 以追蹤所有安全設定變更
+
+✅ 摘要（Executive Summary）
+
+此安全與權限控管規範確保 AI 營運顧問系統在多品牌環境下的資料安全與稽核透明度。
+它整合 RBAC、API 安全、資料加密、審計日誌 與 合規框架，
+形成一個「安全 → 可控 → 可追蹤 → 可信任」的資料治理骨架，
+為 RedDoor 及合作品牌提供長期可擴充的安全基礎。

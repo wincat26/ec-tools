@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - AI 營運顧問系統</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/dashboard-cards.css">
+  <link rel="stylesheet" href="css/onboarding.css">
+</head>
+<body>
+  <!-- 主導航欄 -->
+  <nav class="main-navigation">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="dashboard.html" class="nav-logo">
+          AI 營運顧問
+        </a>
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="dashboard.html" class="nav-link active" id="nav-dashboard" data-page="dashboard">
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="data.html" class="nav-link" id="nav-data" data-page="data">
+              <span class="nav-text">數據分析</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="insights.html" class="nav-link" id="nav-insights" data-page="insights">
+              <span class="nav-text">洞察中心</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="actions.html" class="nav-link" id="nav-actions" data-page="actions">
+              <span class="nav-text">行動方案</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="consultants.html" class="nav-link" id="nav-consultants" data-page="consultants">
+              <span class="nav-text">角色/顧問</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="reports.html" class="nav-link" id="nav-reports" data-page="reports">
+              <span class="nav-text">報告</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="settings.html" class="nav-link" id="nav-settings" data-page="settings">
+              <span class="nav-text">設定</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="brand-selector-nav">
+          <select class="brand-select-nav" id="brandSelectNav">
+            <option>品牌：豆油伯</option>
+          </select>
+        </div>
+        <div class="user-menu-nav">
+          <div class="user-avatar-nav">👤</div>
+          <span class="user-email-nav" id="userEmailNav">demo@reddoor.com</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要內容 -->
+  <main class="main-content">
+    <div class="container">
+      <!-- 頁面標題 -->
+      <section class="page-header-section">
+        <div class="page-header-content">
+          <h1 class="page-title">Dashboard 總覽</h1>
+          <p class="page-subtitle">一頁式最重要聚焦，快速掌握本週營運狀況與異常警示</p>
+          <div class="page-actions">
+            <button class="btn btn-secondary btn-sm" onclick="onboarding.restart()">
+              📚 重新開始引導
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Layer 1: 本週營運概況 -->
+      <section class="summary-section fade-in">
+        <div class="summary-header">
+          <div class="summary-header-title">
+            <h2>本週營運概況</h2>
+            <p id="summaryRangeLabel">最近 7 天 · 與上週同期比較</p>
+          </div>
+          <div class="summary-controls">
+            <label for="summaryRangeSelect" class="sr-only">選擇時間區間</label>
+            <select id="summaryRangeSelect" class="form-input summary-range-select">
+              <option value="7d">最近 7 天</option>
+              <option value="yesterday">昨天</option>
+              <option value="30d">最近 30 天</option>
+              <option value="custom">自訂範圍</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" id="summaryCustomRangeBtn" type="button">自訂日期</button>
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <!-- 營收概況卡片 -->
+          <div class="summary-card summary-card--primary" id="summaryRevenueCard">
+            <div class="summary-card-header">
+              <div>
+                <h3>本週營收</h3>
+                <span class="summary-card-subtitle">含取消退貨後淨值</span>
+              </div>
+              <button class="summary-link" type="button" id="summaryToDataBtn">
+                查看詳細分析 →
+              </button>
+            </div>
+            <div class="summary-card-body">
+              <div class="summary-main-metric">
+                <div class="summary-main-value" id="summaryRevenueValue">NT$825,000</div>
+                <div class="summary-main-change" id="summaryRevenueChange">↓ 8.4%</div>
+              </div>
+              <div class="summary-sparkline-placeholder">近期趨勢圖</div>
+              <div class="summary-mini-metrics">
+                <div class="mini-metric clickable-kpi" data-kpi="traffic" role="button" tabindex="0">
+                  <div class="mini-metric-label">流量</div>
+                  <div class="mini-metric-value" id="summaryTrafficValue">18,200</div>
+                  <div class="mini-metric-change" id="summaryTrafficChange">↓ 5.2%</div>
+                </div>
+                <div class="mini-metric clickable-kpi" data-kpi="conversion" role="button" tabindex="0">
+                  <div class="mini-metric-label">轉換率</div>
+                  <div class="mini-metric-value" id="summaryConversionValue">1.2%</div>
+                  <div class="mini-metric-change" id="summaryConversionChange">↓ 0.3%</div>
+                </div>
+                <div class="mini-metric clickable-kpi" data-kpi="aov" role="button" tabindex="0">
+                  <div class="mini-metric-label">平均訂單金額</div>
+                  <div class="mini-metric-value" id="summaryAovValue">NT$1,520</div>
+                  <div class="mini-metric-change" id="summaryAovChange">↑ 2.1%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 重大異常摘要 -->
+          <div class="summary-card summary-card--alert" id="summaryAlertCard">
+            <div class="summary-card-header">
+              <div>
+                <span class="summary-alert-badge">最大異常</span>
+                <h3 id="summaryAlertTitle">廣告流量下降 12%</h3>
+              </div>
+              <button class="summary-link" type="button" id="summaryToInsightsBtn">
+                查看洞察 →
+              </button>
+            </div>
+            <div class="summary-card-body">
+              <p class="summary-alert-description" id="summaryAlertDescription">
+                Meta Ads 曝光下降，導致轉換率與營收雙雙下滑。
+              </p>
+              <ul class="summary-insight-list" id="summaryInsightList">
+                <li><strong>行動建議：</strong> 重新配置 Meta Ads 預算，提升高 ROAS 活動投放。</li>
+                <li><strong>優先度：</strong> 高 · 影響營收與流量</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-insight-strip" id="summaryQuickInsights">
+          <div class="summary-insight-item">
+            <span class="insight-label">洞察 1</span>
+            <p class="insight-text" id="quickInsightOne">廣告流量下降 12%，為本週最大異常來源。</p>
+          </div>
+          <div class="summary-insight-item">
+            <span class="insight-label">洞察 2</span>
+            <p class="insight-text" id="quickInsightTwo">客單價受新客影響仍維持 1,520 元，建議增加入門商品促購。</p>
+          </div>
+          <div class="summary-insight-item">
+            <span class="insight-label">洞察 3</span>
+            <p class="insight-text" id="quickInsightThree">社群轉換率偏低，需加強 CTA 與導購路徑。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Layer 2: 首屏專業卡片區 -->
+      <section class="dashboard-first-screen-section fade-in">
+        <div class="dashboard-card-row" id="dashboardCardRow">
+          <!-- 數據分析卡片 -->
+          <div class="dashboard-card data-card" id="dataCard">
+            <div class="card-header-modern">
+              <div class="card-icon">≡</div>
+              <div class="card-title-modern">
+                <h3>數據分析</h3>
+                <p class="card-subtitle">GMV 與核心指標摘要</p>
+              </div>
+            </div>
+            <div class="card-content-modern" id="dataCardContent">
+              <!-- 骨架屏載入 -->
+              <div class="card-skeleton-loader">
+                <div class="skeleton-line large"></div>
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line medium"></div>
+              </div>
+            </div>
+            <div class="card-action-modern">
+              <button class="card-cta-btn" onclick="window.location.href='data.html'">
+                前往詳細分析
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 洞察中心卡片 -->
+          <div class="dashboard-card insight-card" id="insightCard">
+            <div class="card-header-modern">
+              <div class="card-icon">*</div>
+              <div class="card-title-modern">
+                <h3>洞察中心</h3>
+                <p class="card-subtitle">AI 與專家智能分析</p>
+              </div>
+            </div>
+            <div class="card-content-modern" id="insightCardContent">
+              <!-- 骨架屏載入 -->
+              <div class="card-skeleton-loader">
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line small"></div>
+              </div>
+            </div>
+            <div class="card-action-modern">
+              <button class="card-cta-btn" onclick="window.location.href='insights.html'">
+                前往洞察中心
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 行動方案卡片 -->
+          <div class="dashboard-card action-card" id="actionCard">
+            <div class="card-header-modern">
+              <div class="card-icon">✓</div>
+              <div class="card-title-modern">
+                <h3>行動方案</h3>
+                <p class="card-subtitle">任務管理與執行進度</p>
+              </div>
+            </div>
+            <div class="card-content-modern" id="actionCardContent">
+              <!-- 骨架屏載入 -->
+              <div class="card-skeleton-loader">
+                <div class="skeleton-line large"></div>
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line medium"></div>
+              </div>
+            </div>
+            <div class="card-action-modern">
+              <button class="card-cta-btn" onclick="window.location.href='actions.html'">
+                管理行動清單
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Layer 3: AI 即時洞察資訊流 -->
+      <section class="ai-feed-section fade-in">
+        <div class="ai-feed-header">
+          <div>
+            <h3>AI 即時洞察資訊流</h3>
+            <p>由 AI 依據最新客觀資料生成</p>
+          </div>
+          <div class="ai-feed-controls">
+            <button class="ai-feed-nav ai-feed-nav--prev" type="button" aria-label="向左瀏覽 AI 洞察" disabled>
+              <span class="icon">←</span>
+            </button>
+            <button class="ai-feed-nav ai-feed-nav--next" type="button" aria-label="向右瀏覽 AI 洞察">
+              <span class="icon">→</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="ai-feed-wrapper">
+          <div class="ai-feed-container" id="aiFeedContainer">
+            <div class="ai-feed-card">
+              <h4>📈 流量洞察</h4>
+              <p>發現「自然搜尋」來源的轉換率本週顯著下降 15%，建議檢查 SEO 關鍵字排名與網站技術狀態。</p>
+            </div>
+            <div class="ai-feed-card">
+              <h4>🛒 商品建議</h4>
+              <p>「商品 A」與「商品 B」的組合購買率極高（達 45%），建議建立組合包優惠以提升客單價。</p>
+            </div>
+            <div class="ai-feed-card">
+              <h4>👥 會員警示</h4>
+              <p>高價值會員 (VIP) 的 30 天內回購率下降至 32%（歷史平均 48%），建議啟動 VIP 專屬召回活動。</p>
+            </div>
+            <div class="ai-feed-card">
+              <h4>💰 價格策略</h4>
+              <p>競爭對手在「熱銷商品 C」類別推出促銷，導致您的流量轉換下降 8%，建議調整價格策略。</p>
+            </div>
+            <div class="ai-feed-card">
+              <h4>📱 移動端體驗</h4>
+              <p>移動端結帳頁面的跳出率達 62%（桌面端 28%），建議優化移動支付流程與頁面載入速度。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 精選行動方案 -->
+        <div class="ai-action-highlight" id="aiActionHighlight">
+          <div class="ai-action-header">
+            <div>
+              <h4>AI 精選行動方案</h4>
+              <p>優先處理的 1-2 項高影響任務，協助我快速落地洞察</p>
+            </div>
+            <div class="ai-action-controls">
+              <button class="btn btn-secondary btn-sm" onclick="window.location.href='data.html'">前往詳細分析</button>
+              <button class="btn btn-primary btn-sm" onclick="window.location.href='actions.html'">查看任務列表</button>
+            </div>
+          </div>
+          <div class="ai-action-list" id="aiActionList">
+            <!-- 由 JavaScript 插入精選行動 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Layer 4: KPI 動態展開區域 -->
+      <section class="kpi-detail-section fade-in" id="kpiDetailSection" style="display: none;">
+        <div class="card">
+          <div class="card-header flex items-center justify-between">
+            <div>
+              <h2 class="card-title" id="kpiDetailTitle">KPI 詳細分析</h2>
+              <p class="text-sm text-gray-600" id="kpiDetailSubtitle"></p>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="closeKpiDetailBtn">關閉</button>
+          </div>
+          <div class="card-body" id="kpiDetailContent">
+            <!-- 動態內容 -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script src="js/utils.js"></script>
+  <script src="js/mockData.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/onboarding.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>專家訂閱服務 - AI 營運顧問系統</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/expert.css">
+</head>
+<body>
+  <!-- 導航列 -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        <a href="dashboard.html">🚀 AI 營運顧問系統</a>
+      </div>
+      <div class="navbar-menu">
+        <a href="dashboard.html" class="navbar-link">返回戰情表</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要內容 -->
+  <main class="container">
+    <div class="expert-subscribe-page">
+      <!-- 頁面標題 -->
+      <div class="page-header">
+        <h1>專家訂閱服務</h1>
+        <p class="page-subtitle">訂閱專業顧問，獲得即時支援與策略建議</p>
+      </div>
+
+      <!-- 專家列表 -->
+      <div class="expert-grid" id="expertGrid">
+        <!-- 由 JavaScript 動態生成 -->
+      </div>
+    </div>
+  </main>
+
+  <!-- 訂閱確認 Modal -->
+  <div class="modal" id="subscribeModal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 class="modal-title">確認訂閱</h2>
+        <button class="modal-close" onclick="closeSubscribeModal()">×</button>
+      </div>
+      <div class="modal-body" id="subscribeModalBody">
+        <!-- 動態內容 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeSubscribeModal()">取消</button>
+        <button class="btn btn-primary" id="confirmSubscribeBtn">確認訂閱</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/utils.js"></script>
+  <script src="js/mockData.js"></script>
+  <script src="js/expert-subscribe.js"></script>
+</body>
+</html>

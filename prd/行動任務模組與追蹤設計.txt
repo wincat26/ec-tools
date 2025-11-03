@@ -1,0 +1,206 @@
+AI 營運顧問系統 — 行動任務模組與追蹤設計
+
+檔案版本： v1.0
+檔名： 07_ActionQueue_And_TaskTracking.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive 產品部門
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案定義：
+
+任務（Action Task）的生成邏輯
+
+狀態流轉與任務層級
+
+資料結構與前後端欄位設計
+
+顧問與品牌雙方的任務協作流程
+
+成效追蹤與任務回饋機制
+
+目標是確保系統能讓使用者「看懂問題 → 採取行動 → 追蹤成果」，
+讓 Guideline 不只是文字，而成為營運週期的可執行任務。
+
+2️⃣ 模組概觀（Module Overview）
+flowchart LR
+  A[Guideline 智能建議] -->|點擊「＋加入任務」| B[建立任務 Create Task]
+  B --> C[任務清單 Action Queue]
+  C --> D[狀態更新 Status Tracking]
+  D --> E[成效回饋 Performance Feedback]
+  E --> F[AI 模型學習回寫 Model Feedback Loop]
+
+
+說明：
+
+所有任務皆從 Guideline 卡片一鍵生成
+
+可設定負責人、截止日期、優先級
+
+狀態可隨時更新，完成後系統會自動收集前後指標比較
+
+3️⃣ 任務生成邏輯（Task Creation Logic）
+觸發來源
+
+由使用者在 Guideline 區塊 點擊「＋加入任務」按鈕
+
+或由系統自動產生週期性建議（如「每週檢查廣告 ROAS」）
+
+任務預設欄位（Auto-filled Fields）
+欄位	來源	說明
+任務名稱	Guideline.suggestion	以建議內容自動生成任務標題
+任務類別	Guideline.category	流量 / 轉換 / 商品 / 會員 / 廣告
+任務說明	Guideline.insight	問題背景說明
+任務來源ID	Guideline.id	追溯原始建議
+建立人	登入帳號	建立任務者
+負責人	可指派	通常為行銷 / 營運人員
+截止日期	預設 +7 天	可修改
+優先級	預設「中」	高 / 中 / 低
+狀態	預設「未開始」	四階段流轉
+4️⃣ 任務狀態流轉（Task Status Flow）
+stateDiagram-v2
+    [*] --> 未開始
+    未開始 --> 進行中 : 開始執行
+    進行中 --> 已完成 : 標記完成
+    進行中 --> 延期 : 截止日超過
+    已完成 --> [*]
+
+狀態	說明	顏色標示
+未開始	剛建立，尚未執行	灰色
+進行中	已分配並在處理中	黃色
+延期	超過截止日期未完成	紅色
+已完成	已執行並提交結果	綠色
+
+系統行為：
+
+延期任務自動推播提醒（LINE / Email）
+
+完成任務後 → 自動觸發「成效回饋流程」
+
+5️⃣ 任務資料結構（Data Schema）
+CREATE TABLE firebase_tasks (
+  id STRING,
+  source_guideline_id STRING,
+  title STRING,
+  description STRING,
+  category STRING,
+  assignee STRING,
+  priority STRING,
+  status STRING,
+  due_date DATE,
+  created_by STRING,
+  created_at TIMESTAMP,
+  completed_at TIMESTAMP,
+  performance_before FLOAT64,
+  performance_after FLOAT64,
+  impact_score FLOAT64
+);
+
+
+欄位說明：
+
+欄位	功能說明
+id	任務唯一 ID
+source_guideline_id	對應 Guideline 來源
+performance_before	建立任務當下的 KPI 數值
+performance_after	任務完成後再取樣的 KPI
+impact_score	(after - before) / before × 100%，代表任務成效
+6️⃣ 任務視覺呈現（UI & Interaction）
+📋 任務列表畫面
+任務名稱	狀態	負責人	截止日	成效	來源
+優化 Meta Ads 受眾設定	進行中	行銷組	11/05	+8.2%	Guideline #023
+推出 NT$990 入門包活動	已完成	電商組	11/07	+12.5%	Guideline #021
+調整 Email EDM 分眾策略	未開始	CRM 組	11/10	-	Guideline #025
+✏️ 任務編輯彈窗
+
+欄位：任務名稱、描述、指派對象、截止日、備註
+
+按鈕：儲存、取消
+
+完成任務 → 自動鎖定編輯
+
+🧩 狀態互動
+
+點擊狀態標籤可即時切換（未開始 → 進行中 → 完成）
+
+顏色動態更新，提供視覺回饋
+
+完成後會顯示「✨ 成效更新中」動畫
+
+7️⃣ 顧問與品牌協作（Collaboration Mechanism）
+角色	權限	可操作項目
+品牌營運人員	編輯 / 更新	可建立、指派與更新任務狀態
+顧問（RedDoor）	檢視 / 評分	可標記任務成效、給予指導
+管理者（PM）	全權	可刪除任務與匯出資料
+🤝 協作流程
+sequenceDiagram
+  participant User as 品牌使用者
+  participant System as AI 營運顧問系統
+  participant Consultant as 顧問 / PM
+
+  User->>System: 點擊 Guideline → 建立任務
+  System-->>User: 顯示任務建立成功通知
+  User->>Consultant: 指派任務 or 請求意見
+  Consultant-->>System: 評估任務成效與回饋
+  System-->>User: 更新 impact_score 與建議分數
+
+8️⃣ 成效追蹤與回饋（Performance Feedback）
+
+每個任務在完成後，系統會自動抓取相同 KPI 的「前後值」進行比較。
+
+指標	任務前	任務後	改善幅度	狀態
+CVR（轉換率）	1.2%	1.4%	+0.2%	✅ 有改善
+AOV（客單價）	NT$1,520	NT$1,630	+7.2%	✅ 成功
+流量（Sessions）	8,500	9,100	+7.1%	⚙️ 持續觀察
+
+演算法邏輯
+
+UPDATE firebase_tasks
+SET performance_after = (SELECT metric_value FROM processed.daily_summary WHERE date = current_date),
+    impact_score = (performance_after - performance_before) / performance_before * 100
+WHERE status = '已完成';
+
+
+回饋可視化
+
+任務卡右側顯示：📈 +7.2% 成效提升
+
+系統自動生成「行動回顧摘要」送回 Guideline 模型，作為 AI 訓練語料
+
+9️⃣ 資料整合（Data Integration with Guideline）
+流程階段	資料流向
+任務建立	guideline_suggestions → firebase_tasks
+任務更新	前端操作 → Firestore 寫入
+任務完成	Firestore → BigQuery 匯出每日同步
+成效分析	BigQuery → processed.task_performance
+AI 迴饋學習	task_performance → Guideline 模型再訓練
+🔟 自動提醒與推播設計（Notifications）
+條件	通知方式	說明
+任務到期前 24 小時	LINE Notify	「📅 任務明日到期：請確認進度」
+任務逾期	Email + LINE	「⚠️ 任務已逾期，請更新狀態」
+任務完成	系統訊息 + LINE	「✅ 任務完成，正在分析成效」
+每週週報生成	自動推播摘要報告	整合已完成任務與成效統計
+11️⃣ 成效迴路（Impact Feedback Loop）
+graph TD
+  A[任務建立] --> B[執行中]
+  B --> C[完成任務]
+  C --> D[系統自動計算成效]
+  D --> E[生成 Task Impact Report]
+  E --> F[回饋至 Guideline 模型]
+  F --> G[AI 提升下一輪建議精度]
+
+12️⃣ 指標與驗證目標（KPI & Validation Metrics）
+指標	目標值	驗證方式
+任務建立率	≥ 70%（每週活躍使用者中）	系統紀錄
+任務完成率	≥ 60%	任務狀態統計
+成效提升率	≥ 50% 任務有正向改善	指標比對
+通知開啟率	≥ 80%	LINE / Email Log
+顧問回饋採納率	≥ 75%	顧問標記資料
+✅ 摘要（Executive Summary）
+
+行動任務模組（Action Queue）是系統的「執行引擎」。
+它將 AI 的洞察轉化為具體任務，並自動追蹤執行與成效，
+最終再回饋給 Guideline 模型，形成 「分析 → 行動 → 回饋 → 學習」 的自我強化循環。
+
+此模組不僅支援內部營運人員使用，也能讓顧問端同步監控與輔導，
+成為品牌營運數據驅動決策的實質落地工具。

@@ -1,0 +1,183 @@
+AI 營運顧問系統 — 事件追蹤與分析規格
+
+檔案版本： v1.0
+檔名： 08_Tracking_And_Analytics_Spec.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive Data & PM Team
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案用於明確定義：
+
+產品前後端事件追蹤規格（GA4 + 自建事件）
+
+各互動動作的事件命名、參數格式、觸發時機
+
+BigQuery 中對應表格與欄位結構
+
+儀表板中指標如何由事件轉換而來
+
+最終目標：
+讓行為 → 指標 → 洞察 → 行動 形成可驗證的閉環。
+
+2️⃣ 事件分類總覽（Event Taxonomy）
+
+系統事件分為五大類：
+
+類別	說明	事件前綴
+🔐 系統登入事件	登入、登出、帳號驗證等	auth_
+📈 數據瀏覽事件	進入儀表板、檢視圖表、切換區間	view_
+🧠 Guideline 互動事件	檢視建議、加入任務、評分建議	guideline_
+✅ 任務行為事件	建立任務、更新狀態、完成任務	task_
+📬 通知與匯出事件	傳送 LINE、Email、匯出報告	notify_
+3️⃣ 系統事件追蹤總表（Event Dictionary）
+類別	事件名稱	觸發時機	主要參數	說明
+登入類	auth_login	使用者成功登入	user_id, brand_id	登入成功後觸發一次
+	auth_logout	使用者登出	user_id	手動登出或 Token 失效
+瀏覽類	view_dashboard	進入 Dashboard 首頁	brand_id, date_range	每次載入首頁
+	view_kpi_detail	點擊 KPI 分解圖	metric, source	用於分析關注指標
+	view_product_insight	開啟商品結構頁	category, product_id	追蹤使用者對商品興趣
+Guideline 類	guideline_view	展開 Guideline 建議卡	guideline_id, category	查看特定建議
+	guideline_add_task	點擊「加入任務」	guideline_id, category, suggestion_text	用於任務轉換分析
+	guideline_feedback	使用者對建議評分	guideline_id, score	1–5 分制，用於 AI 評估
+任務類	task_create	新增任務成功	task_id, category, priority	由 Guideline 或手動建立
+	task_update_status	任務狀態更新	task_id, old_status, new_status	流轉監控
+	task_complete	任務標記完成	task_id, impact_score	自動更新績效資料
+通知類	notify_send_line	點擊「傳送 LINE 報告」	user_id, report_type	匯出或推播報告
+	notify_auto_weekly	每週自動報告推播	brand_id, report_id	自動排程觸發
+4️⃣ GA4 與自建事件整合（Tracking Architecture）
+flowchart LR
+  A[使用者互動] --> B[GA4 Event Tag]
+  A --> C[自建事件 Tracker.js]
+  B --> D[GA4 → BigQuery Export]
+  C --> E[Firestore / BigQuery]
+  D --> F[Analytics Layer]
+  E --> F
+  F --> G[Looker Studio / Guideline Engine]
+
+
+所有前端事件皆透過 Google Tag Manager (GTM) 進行統一管理。
+
+GA4 負責標準互動事件；自建事件補足 SaaS 模組資料（如任務、AI 建議）。
+
+最終在 BigQuery 進行資料整合（UNION ALL）成單一事件表。
+
+5️⃣ BigQuery 表結構（Event Table Schema）
+CREATE TABLE analytics_event_log (
+  event_id STRING,
+  event_name STRING,
+  user_id STRING,
+  brand_id STRING,
+  session_id STRING,
+  event_timestamp TIMESTAMP,
+  event_params JSON,
+  platform STRING,
+  source STRING,
+  screen_name STRING
+);
+
+
+欄位說明：
+
+欄位	說明
+event_name	事件名稱（如 task_complete）
+event_params	JSON 格式，儲存彈性參數
+source	web, line, email 等
+screen_name	對應的頁面名稱
+platform	Desktop, Mobile, Tablet
+6️⃣ 事件參數結構範例（Event Parameters Example）
+{
+  "event_name": "guideline_add_task",
+  "user_id": "U123456",
+  "brand_id": "B001",
+  "event_timestamp": "2025-10-31T09:45:32+08:00",
+  "event_params": {
+    "guideline_id": "G_042",
+    "category": "轉換率",
+    "suggestion_text": "調整 Meta Ads 受眾設定",
+    "source": "Meta Ads"
+  },
+  "screen_name": "Dashboard_Guideline",
+  "platform": "Desktop"
+}
+
+7️⃣ 儀表板分析指標（Dashboard Metrics Mapping）
+指標名稱	計算邏輯	資料來源事件	使用目的
+活躍使用者數（DAU / WAU）	COUNT(DISTINCT user_id)	auth_login	系統使用黏著度
+Guideline 開啟率	guideline_view / view_dashboard	guideline_view	建議吸收程度
+任務建立率	task_create / guideline_add_task	task_create	建議轉化為行動比例
+任務完成率	task_complete / task_create	task_complete	執行效率
+建議採納率	guideline_feedback >=4 / guideline_view	guideline_feedback	AI 建議滿意度
+報告推播開啟率	開啟數 / 發送數	notify_send_line	溝通觸達成效
+8️⃣ 分析維度（Dimensions）
+維度名稱	類型	範例值
+brand_id	字串	"SaintPaul"
+user_role	枚舉	"行銷人員", "顧問", "品牌主"
+category	枚舉	"流量", "轉換", "商品", "會員", "廣告"
+platform	枚舉	"Web", "Mobile"
+source	字串	"Meta Ads", "Google Ads"
+priority	枚舉	"高", "中", "低"
+9️⃣ 分析指標範例圖（Mermaid 結構圖）
+flowchart LR
+  A[事件 Log 表 analytics_event_log]
+  A --> B[清洗後行為表 user_action_metrics]
+  B --> C1[任務相關 KPI]
+  B --> C2[Guideline 成效 KPI]
+  B --> C3[登入與留存 KPI]
+  C1 --> D[Looker Studio / Dashboard]
+  C2 --> D
+  C3 --> D
+
+🔟 數據品質驗證（Data Validation）
+驗證項目	方法	預期結果
+重複事件	COUNT(DISTINCT event_id) vs COUNT(*)	一致
+時區檢查	event_timestamp 轉台灣時區	+8H
+缺漏率	COUNTIF(params IS NULL)	< 1%
+GA4 對照	事件量比對差距	< ±5%
+每日 ETL 驗證	Dataform assert 任務	自動告警
+11️⃣ 成效應用範例（Example Analytics Use Cases）
+📊 範例一：建議採納行為分析
+SELECT 
+  category,
+  COUNTIF(event_name = 'guideline_add_task') AS added,
+  COUNTIF(event_name = 'task_complete') AS completed,
+  ROUND(COUNTIF(event_name = 'task_complete') / COUNTIF(event_name = 'guideline_add_task') * 100, 2) AS adoption_rate
+FROM analytics_event_log
+WHERE event_date BETWEEN '2025-10-01' AND '2025-10-31'
+GROUP BY category;
+
+
+輸出示例：
+
+類別	加入任務數	完成任務數	採納率
+流量	42	29	69%
+轉換	35	28	80%
+商品	18	12	67%
+📈 範例二：活躍用戶路徑分析（Behavior Funnel）
+SELECT 
+  COUNT(DISTINCT user_id) AS users,
+  COUNTIF(event_name = 'view_dashboard') AS step1,
+  COUNTIF(event_name = 'guideline_view') AS step2,
+  COUNTIF(event_name = 'guideline_add_task') AS step3,
+  COUNTIF(event_name = 'task_complete') AS step4
+FROM analytics_event_log
+WHERE event_date BETWEEN '2025-10-20' AND '2025-10-27';
+
+
+輸出解讀：
+可視化「從登入 → 看建議 → 新增任務 → 完成任務」的整體使用漏斗。
+
+12️⃣ 指標與追蹤策略（KPI & Strategy Alignment）
+指標	說明	最終關聯商業成果
+Guideline 開啟率 ↑	使用者願意閱讀 AI 建議	系統信任度提升
+任務建立率 ↑	建議轉化為行動	行動執行率上升
+任務完成率 ↑	行動被落實	營運績效改善
+建議採納率 ↑	AI 建議被接受	模型可信度強化
+留存率 ↑	每週登入數穩定	使用習慣養成
+✅ 摘要（Executive Summary）
+
+本追蹤規格確保每一次使用者互動都能被準確記錄，
+從登入、查看、行動、到完成任務，
+資料在 GA4、BigQuery 與自建事件層中被完整整合，
+讓 PM、顧問與 AI 模型都能從同一套行為數據出發，
+構築一個「以行動驅動成長」的數據分析循環。

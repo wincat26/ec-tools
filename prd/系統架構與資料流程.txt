@@ -1,0 +1,188 @@
+AI 營運顧問系統 — 系統架構與資料流程
+
+檔案版本： v1.0
+檔名： 04_System_Architecture_And_DataFlow.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive Data Team
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案旨在清楚定義 AI 營運顧問系統的：
+
+資料來源（Data Sources）
+
+系統架構（System Architecture）
+
+資料流向（ETL Flow & Data Pipeline）
+
+安全控管與更新週期（Security & Schedule）
+
+表格命名與邏輯結構（Schema Design）
+
+2️⃣ 系統總覽架構圖（System Overview）
+flowchart LR
+  A1[Shopline / Cyberbiz API] -->|每日匯入| B[BigQuery Staging]
+  A2[GA4 Export Table] -->|自動同步| B
+  A3[Meta Ads / Google Ads API] -->|每日匯入| B
+  B -->|ETL / Dataform Transformation| C[BigQuery Processed Layer]
+  C -->|定期更新| D[Dashboard & Guideline Engine]
+  D -->|REST API / JSON| E[Next.js 前端]
+  D -->|文字生成| F[OpenAI API / BQML]
+  E -->|操作互動| G[Action Queue / Firebase]
+  C -->|報表匯出| H[LINE Notify / Email 推播]
+
+3️⃣ 架構分層說明（Layered Architecture）
+層級	名稱	說明	技術組件
+L1	Data Source 層	來源系統：電商平台、廣告平台、GA4	Shopline API / Cyberbiz API / GA4 Export / Ads API
+L2	Staging 層	暫存原始資料，進行清洗與時間標準化	BigQuery Dataset：raw_ 前綴
+L3	Processing 層	整合與轉換資料，計算營運指標	Dataform（SQLX） + BigQuery
+L4	Application 層	前端查詢、AI 分析與任務執行	Next.js + Node.js + Firebase
+L5	Presentation 層	視覺化儀表板、報告與 LINE 通知	Recharts / LINE API / Report Generator
+4️⃣ 資料流程說明（ETL Data Flow）
+🧩 Step 1：資料來源收集（Data Ingestion）
+資料來源	API / 匯出方式	更新頻率	主要欄位
+Shopline / Cyberbiz	REST API / CSV 匯出	每日	訂單、會員、商品
+GA4	BigQuery Export Table	每日自動同步	event_date、event_name、user_id、page_location
+Meta Ads / Google Ads	API via App Script / Connector	每日	campaign_name、clicks、impressions、cost
+手動上傳補檔	Google Drive → Dataform Trigger	依需求	活動代號、成本調整資料
+
+⚙️ 時間格式統一： 所有時間統一轉換為 Asia/Taipei
+⚙️ 主鍵邏輯：
+
+Order ID → 訂單層唯一鍵
+
+User ID → 顧客層唯一鍵
+
+Event ID → GA4 事件層唯一鍵
+
+🧮 Step 2：資料清洗與轉換（Transformation / Dataform）
+
+清洗規則：
+
+時間欄位 UTC → 台灣時區（TIMESTAMP_SECONDS + INTERVAL 8 HOUR）
+
+重複訂單過濾（以最新狀態為主）
+
+會員與訂單合併鍵：customer_id = user_id
+
+商品分類以 SKU / category_tag 對應
+
+GA4 event 僅保留主要事件：view_item、add_to_cart、begin_checkout、purchase
+
+產出表結構（Processed Layer）：
+
+資料集名稱	資料表	說明
+cdp_data	lv0_orders	訂單層級資料（每日更新）
+cdp_data	lv0_customers	會員資料（每日更新）
+cdp_data	lv0_products	商品層資料
+analytics_xxxxx	events_*	GA4 匯出事件表
+ad_data	meta_ads_daily	廣告成效表
+ad_data	google_ads_daily	廣告成效表（Google）
+processed	daily_summary	彙總營運指標（營收 / 流量 / 轉換 / 客單）
+processed	source_metrics	七大流量來源 KPI 統計
+processed	guideline_trigger	AI 判斷用異常事件表
+📊 Step 3：指標運算（KPI Calculation）
+
+主要指標依據營收公式：
+
+營收 = 流量 × 轉換率 × 平均客單價
+
+指標	來源	運算邏輯
+流量（Sessions）	GA4 events	COUNT(DISTINCT session_id)
+轉換率（CVR）	GA4 + 訂單表	purchases / sessions
+平均客單價（AOV）	訂單表	SUM(revenue) / COUNT(orders)
+新客比例	訂單表 + 會員表	COUNT(DISTINCT first_purchase) / total_customers
+熱銷品貢獻度	商品表	SUM(sales_per_product) / total_sales
+廣告 ROAS	廣告表 + 訂單表	revenue / ad_cost
+🧠 Step 4：Guideline 模型運作邏輯（AI Layer）
+
+規則觸發（Rule-based Trigger）
+
+若某指標變化超過門檻（例：下降 >10%）→ 寫入 guideline_trigger
+
+觸發類型包括：traffic_drop、conversion_drop、aov_drop
+
+AI 文字生成
+
+查詢觸發表，將異常原因 + 來源組合成 prompt
+
+透過 AI.GENERATE_TEXT_FROM_TABLE 或 OpenAI API 生成建議
+
+輸出格式：
+
+{
+  "category": "轉換率",
+  "insight": "轉換率下降 0.3%，主要出現在廣告流量。",
+  "suggestion": "建議調整 Meta Ads 受眾，聚焦最近14天訪客。"
+}
+
+
+資料輸出
+
+寫入 BigQuery 表格：processed.guideline_suggestions
+
+前端以 REST API 查詢顯示於 Guideline 區塊
+
+🔄 Step 5：前端資料讀取與顯示（Application Layer）
+功能模組	讀取來源	API 範例
+Dashboard Summary	processed.daily_summary	/api/v1/summary?date=2025-10-27
+Traffic Source Table	processed.source_metrics	/api/v1/source-metrics?date_range=7d
+Conversion Funnel	analytics_*.events_*	/api/v1/funnel?event=view_item
+Product Breakdown	cdp_data.lv0_products	/api/v1/products/top10
+Guideline 建議	processed.guideline_suggestions	/api/v1/guideline/latest
+任務清單	Firebase / Firestore	/api/v1/tasks?user_id=123
+5️⃣ 安全與權限設計（Security & IAM）
+模組	控管方式	權限層級
+BigQuery 資料集	IAM Role：bq.dataViewer	依專案設定
+API Gateway	JWT Token / OAuth	Admin / 顧問 / 一般使用者
+Firebase Auth	Google Sign-In	帳號登入控管
+Dataform	GCP Service Account	Pipeline 自動化
+LINE / Email 推播	限用 Server-to-Server	不允許前端直接呼叫
+
+🔒 所有 API 請求必須透過 Server Proxy 層處理，禁止前端直連 BigQuery。
+
+6️⃣ 更新週期與排程（Schedule & Automation）
+程序	時間	工具	說明
+API Data Fetch	每日 02:00	Cloud Scheduler + Apps Script	抓取各平台資料
+Dataform ETL	每日 03:00	Dataform Job	資料清洗與轉換
+指標更新	每日 04:00	BigQuery View Refresh	更新 processed layer
+Guideline 生成	每週一 07:30	BQML + OpenAI	產出 AI 建議
+LINE / Email 通知	每週一 09:00	Cloud Function	傳送摘要報告
+7️⃣ 表格命名規範（Schema Naming Convention）
+類型	命名規則	範例
+原始資料表	raw_{source}_{entity}	raw_shopline_orders
+處理中表	stg_{entity}	stg_customers
+轉換後表	lv0_{entity} / processed_{entity}	lv0_orders, processed_daily_summary
+視圖	view_{purpose}	view_dashboard_summary
+觸發表	guideline_trigger	系統異常觸發
+建議表	guideline_suggestions	AI 輸出建議內容
+8️⃣ 資料品質控管（Data Quality Assurance）
+檢查類型	方法	預期結果
+Null 檢查	COUNTIF(column IS NULL)	< 1%
+重複訂單檢查	COUNT(DISTINCT order_id) vs COUNT(*)	相符
+時區對齊	TIMESTAMP_DIFF(TW, UTC)	+8
+欄位完整性	Schema Compare with Spec	無缺漏
+異常通報	Dataform Assert + Slack Webhook	自動通知
+9️⃣ 系統維運與監控（Monitoring & Logging）
+
+ETL Log：每次 Dataform 執行寫入 processed.etl_log
+
+API Error Log：Cloud Logging 監控錯誤與延遲
+
+Guideline Log：記錄每次建議生成時間與 token 用量
+
+使用者行為追蹤：GA4 for App（登入、檢視、建立任務事件）
+
+🔟 後續擴展考量（Scalability & Future Work）
+項目	延伸方向
+多品牌架構	引入 brand_id 維度於所有表格
+實時更新	使用 Pub/Sub + Streaming Insert
+AI 模型升級	由 Rule-based → 混合學習（Hybrid Model）
+數據可視化層	Looker Studio → 原生 Recharts 視覺引擎
+客戶自助查詢	加入 SQL Playground（限顧問角色）
+✅ 摘要（Executive Summary）
+
+整個系統以 BigQuery 為核心中樞，
+將多來源資料整合 → 清洗 → 運算 → AI 生成 → 前端展示 → 任務落地形成閉環。
+
+目標是讓營運人員登入後，看到的每一項數據都能被「信任」、每一個建議都能被「採取」。

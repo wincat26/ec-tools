@@ -1,0 +1,288 @@
+🎨 AI 營運顧問系統 — 介面與互動設計檔案
+
+檔案版本： v1.0
+檔名： 05_Wireframe_And_UI_Flow.md
+建立日期： 2025-10-31
+檔案擬定人： RedDoor Interactive 產品部門
+
+1️⃣ 檔案目的（Purpose）
+
+本檔案說明系統主要介面（Dashboard、Guideline、Action Queue）的視覺階層與互動邏輯。
+目標是確保設計與前端開發在以下幾個面向上保持一致：
+
+畫面結構（資訊架構 / Layout）
+
+使用者操作流程（User Flow）
+
+模組間資料對應關係（Data Binding）
+
+假資料參考結構（Mock Data Model）
+
+2️⃣ 系統主畫面階層（UI Information Architecture）
+graph TD
+  A[登入頁面 / Login] --> B[主畫面 Dashboard]
+  B --> B1[營運摘要卡片區 Summary Overview]
+  B --> B2[KPI 金字塔分析 KPI Breakdown]
+  B --> B3[七大流量策略表 Traffic Strategy]
+  B --> B4[轉換漏斗分析 Conversion Funnel]
+  B --> B5[商品結構 Product Insight]
+  B --> B6[Guideline 智能建議區 Recommendations]
+  B --> B7[行動任務清單 Action Queue]
+  B --> B8[報告與提醒 Report & Notification]
+  B --> C[設定頁面 Settings / Profile]
+
+3️⃣ 登入與首頁設計（Login & Landing）
+🧭 登入頁面
+
+功能要點
+
+使用 Google OAuth 登入（Firebase Auth）
+
+首次登入會要求選擇品牌（Brand Selector）
+
+驗證通過後導向 /dashboard
+
+互動說明
+
+輸入框動態檢查格式（Email / Password）
+
+登入失敗提示（紅框 + 錯誤訊息）
+
+登入後將 Token 儲存於 LocalStorage（1 週有效期）
+
+🏠 主畫面（Dashboard Landing）
+
+畫面由上至下分為四層：
+
+區域	名稱	功能描述
+Header	導覽列（品牌名稱、時間範圍選擇、用戶頭像）	切換日期區間、查看個人設定
+Layer 1	營運摘要區	顯示營收、成長率、主要異常提醒
+Layer 2	KPI 金字塔	將營收分解為「流量 × 轉換 × 客單」三層
+Layer 3	Guideline 與任務區	顯示系統分析出的觀察結果與行動建議
+Footer	報告更新提示與通知設定	顯示下次報告更新時間
+4️⃣ 主畫面互動流程（User Flow）
+flowchart TD
+  A[登入成功] --> B[Dashboard 首頁載入]
+  B --> C[營運摘要區 Summary Section]
+  C -->|點擊查看更多| D[KPI 分解圖 Pyramid View]
+  D -->|點擊異常指標| E[Guideline 智能建議]
+  E -->|新增任務| F[Action Queue]
+  F -->|標記完成| G[成效回饋 / 重新生成 Guideline]
+  G -->|每週一自動| H[報告推播至 LINE / Email]
+
+5️⃣ 畫面模組說明（UI Modules Breakdown）
+5.1 營運摘要區（Summary Overview）
+
+目的： 在 5 秒內告訴使用者「本週表現如何」。
+
+元件	說明
+總營收卡	顯示本週營收金額 + 變化率
+成長率指標	以紅/綠箭頭表示漲跌
+主要異常訊息框	例如「流量下降 5.2%，主要來自廣告來源」
+按鈕：「查看詳細分析」	導向 KPI 分解圖
+
+資料來源：processed.daily_summary
+
+5.2 KPI 金字塔區（KPI Breakdown）
+
+目的： 將營收拆解成三大構面並引導使用者逐層思考。
+
+graph TD
+  A[營收 Revenue] --> B[流量 Traffic]
+  A --> C[轉換率 Conversion Rate]
+  A --> D[平均客單價 AOV]
+  B --> B1[七大流量策略]
+  C --> C1[轉換漏斗分析]
+  D --> D1[商品結構分析]
+
+
+互動行為：
+
+滑鼠懸停：顯示對應數值與變化趨勢。
+
+點擊指標：展開詳細圖表（折線圖或柱狀圖）。
+
+資料來源：
+
+processed.source_metrics
+
+analytics_xxx.events_*
+
+cdp_data.lv0_products
+
+5.3 七大流量策略表（Traffic Strategy Table）
+
+表格結構：
+
+流量來源	Sessions	CVR	AOV	營收貢獻	趨勢
+搜尋	3,200	1.5%	1,480	71,000	↑
+廣告	8,500	1.1%	1,600	150,000	↓
+社群	2,100	0.9%	1,200	22,000	↓
+
+互動行為
+
+點擊列：展開對應 Guideline 建議卡
+
+右上角下拉：可切換週期（7天 / 30天）
+
+5.4 轉換漏斗區（Conversion Funnel）
+
+可視化結構
+
+graph LR
+  A[view_item 商品瀏覽] --> B[add_to_cart 加入購物車]
+  B --> C[begin_checkout 結帳開始]
+  C --> D[purchase 完成購買]
+
+
+互動邏輯
+
+漏斗階段點擊 → 顯示掉落率詳細資料
+
+系統自動高亮掉落率最高區段（紅色顯示）
+
+可切換不同流量來源的漏斗比較
+
+5.5 商品結構區（Product Insight）
+
+功能目的：
+讓使用者瞭解商品結構與客單價之間的關聯。
+
+元件	說明
+熱銷商品列表	Top 10 商品及其營收佔比
+單價分佈圖	顯示高價／中價／低價商品分佈
+客單價變化圖	顯示 AOV 隨商品組合變化的趨勢
+
+互動行為：
+
+點擊商品名稱 → 導向商品頁／分析報告
+
+Hover 顯示最近 7 天銷售趨勢
+
+5.6 Guideline 智能建議區（AI Recommendations）
+
+設計邏輯：
+每一條建議由三層構成：
+1️⃣ 觀察結果（Insight）
+2️⃣ 建議行動（Suggestion）
+3️⃣ 行動按鈕（Add to Task）
+
+範例卡片設計：
+
+📉 轉換率下降 0.3%
+主要出現在廣告流量（Meta Ads）
+💡 建議：重新設定受眾 → 聚焦最近14天訪客
+[＋ 加入任務清單]
+
+
+互動說明：
+
+點擊「＋加入任務清單」 → 觸發任務生成彈窗
+
+彈窗內容：
+
+任務名稱自動帶入建議文案
+
+可編輯「負責人」「截止日」「備註」
+
+按下「建立任務」 → 寫入 Firebase
+
+資料來源：
+processed.guideline_suggestions
+
+5.7 行動任務清單（Action Queue）
+
+畫面結構：
+
+任務名稱	狀態	負責人	截止日期	來源建議
+優化 Meta Ads 受眾設定	進行中	行銷組	11/05	Guideline #023
+推出 NT$990 入門包	未開始	電商組	11/07	Guideline #021
+
+互動功能：
+
+狀態切換按鈕（未開始 → 進行中 → 完成）
+
+可設定「標星」為高優先級任務
+
+可匯出 Google Sheet（同步顧問追蹤）
+
+完成後自動紀錄「執行日」與「成效標註」
+
+資料來源： Firebase / Firestore
+
+5.8 報告與提醒區（Report & Notification）
+
+功能描述
+
+顯示下次自動更新時間：「下次更新：2025/11/04 09:00」
+
+按鈕：「📩 傳送至 LINE」
+
+Checkbox：「📅 每週自動接收報告」
+
+互動邏輯
+
+點擊傳送 → 呼叫 /api/v1/notify
+
+成功提示：「已送出報告至 LINE Notify」
+
+6️⃣ 畫面導覽流程（Wireframe Navigation Flow）
+graph TD
+  A[Dashboard 首頁] --> B[詳細 KPI 分解頁]
+  A --> C[Guideline 建議頁]
+  A --> D[Action Queue 任務頁]
+  C -->|點擊＋| D
+  D --> E[報告總覽頁 / 匯出PDF]
+  A --> F[設定頁 / Profile]
+
+7️⃣ 假資料模型（Mock Data for Cursor Prototype）
+{
+  "summary": {
+    "revenue": "NT$825,000",
+    "change": "-8.4%",
+    "traffic": 18200,
+    "conversion_rate": "1.2%",
+    "avg_order_value": "NT$1,520"
+  },
+  "guidelines": [
+    {
+      "category": "轉換率",
+      "insight": "Meta Ads 流量下降 12%，轉換率低於平均。",
+      "suggestion": "建議重新設定受眾，聚焦最近14天訪客。"
+    },
+    {
+      "category": "客單價",
+      "insight": "高價商品比例偏高，影響新客轉換。",
+      "suggestion": "推出 NT$990 入門包活動。"
+    }
+  ],
+  "tasks": [
+    { "task": "重新設定 Meta Ads 受眾", "status": "未開始", "due": "2025/11/07" },
+    { "task": "推出 NT$990 入門包", "status": "進行中", "due": "2025/11/05" }
+  ]
+}
+
+8️⃣ UI 規格說明（Component Specification）
+元件名稱	類型	資料來源	UI 行為
+SummaryCard	Component	daily_summary	自動計算漲跌趨勢顏色
+KPIChart	Component	source_metrics	Hover 顯示 tooltip
+GuidelineCard	Component	guideline_suggestions	可展開／收合詳細內容
+TaskItem	Component	Firestore	可 inline 編輯狀態
+NotificationBar	Component	Static / Setting	顯示下一次更新時間
+9️⃣ 響應式設計（Responsive Rules）
+裝置	版面組態	顯示調整
+桌機（>1280px）	三欄佈局（Summary / KPI / Guideline）	顯示完整圖表
+平板（768–1280px）	兩欄佈局	收合側邊任務列
+手機（<768px）	單欄滾動式	Guideline 與任務可切換頁籤
+🔟 UI 體驗準則（UX Design Principles）
+原則	說明
+3 秒理解原則	登入後 3 秒內可理解營運狀況
+層級清晰原則	從全貌 → 問題 → 行動，一層一層展開
+可講故事原則	畫面結構即報告架構，可直接開會展示
+行動導向原則	每個異常都能轉化成具體任務
+節奏感原則	強化週期性登入的使用慣性（週一更新）
+✅ 摘要（Executive Summary）
+
+本 UI 設計以「營運回顧 → 問題定位 → 行動引導」為互動主軸，
+透過清晰層級、即時反饋與任務轉換設計，
+讓系統不只是報表，而是一個「能帶使用者思考的營運顧問介面」。

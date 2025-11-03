@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>角色/顧問池 - AI 營運顧問系統</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navigation.css">
+</head>
+<body>
+  <!-- 主導航欄 -->
+  <nav class="main-navigation">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="dashboard.html" class="nav-logo">
+          AI 營運顧問
+        </a>
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="dashboard.html" class="nav-link" id="nav-dashboard" data-page="dashboard">
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="data.html" class="nav-link" id="nav-data" data-page="data">
+              <span class="nav-text">數據分析</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="insights.html" class="nav-link" id="nav-insights" data-page="insights">
+              <span class="nav-text">洞察中心</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="actions.html" class="nav-link" id="nav-actions" data-page="actions">
+              <span class="nav-text">行動方案</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="consultants.html" class="nav-link active" id="nav-consultants" data-page="consultants">
+              <span class="nav-text">角色/顧問</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="reports.html" class="nav-link" id="nav-reports" data-page="reports">
+              <span class="nav-text">報告</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="settings.html" class="nav-link" id="nav-settings" data-page="settings">
+              <span class="nav-text">設定</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="brand-selector-nav">
+          <select class="brand-select-nav" id="brandSelectNav">
+            <option>品牌：豆油伯</option>
+          </select>
+        </div>
+        <div class="user-menu-nav">
+          <div class="user-avatar-nav">👤</div>
+          <span class="user-email-nav" id="userEmailNav">demo@reddoor.com</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 頁面標題 -->
+  <section class="page-header-section">
+    <div class="page-header-content">
+      <h1 class="page-title">角色/顧問池</h1>
+      <p class="page-subtitle">支援外部諮詢及人格化技能，選擇不同角色獲得專業見解</p>
+    </div>
+  </section>
+
+  <!-- 主要內容 -->
+  <main class="main-content">
+    <div class="container">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rosebud 角色 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📊 Rosebud</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">👤</div>
+              <h3>資料分析師</h3>
+              <p>即將推出：專精數據解讀與趨勢分析</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 挑戰者角色 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">⚔️ 挑戰者</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">👤</div>
+              <h3>策略挑戰者</h3>
+              <p>即將推出：質疑策略，提供不同視角</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 智者角色 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">🧙 智者</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">👤</div>
+              <h3>深度見解者</h3>
+              <p>即將推出：提供深度見解與長遠規劃建議</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 外部專家顧問 -->
+        <div class="card lg:col-span-3">
+          <div class="card-header">
+            <h2 class="card-title">👨‍💼 外部專家顧問（訂閱制）</h2>
+          </div>
+          <div class="card-body">
+            <div class="coming-soon-placeholder">
+              <div class="placeholder-icon">🔧</div>
+              <h3>功能開發中</h3>
+              <p>即將推出：訂閱外部專家顧問，獲得專業領域建議</p>
+              <a href="expert-subscribe.html" class="btn btn-primary btn-sm" style="margin-top: var(--spacing-md);">
+                查看專家訂閱服務 →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script src="js/utils.js"></script>
+  <script src="js/navigation.js"></script>
+</body>
+</html>
+

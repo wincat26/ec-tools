@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電商王者之路 - 征戰儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --king-gold: #fbbf24;
+            --king-red: #dc2626;
+            --king-purple: #7c3aed;
+            --king-blue: #2563eb;
+            --king-green: #059669;
+        }
+        
+        body { 
+            font-family: 'Inter', 'Noto Sans TC', sans-serif; 
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e40af 100%);
+            min-height: 100vh;
+        }
+        
+        .king-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .hero-crown {
+            background: linear-gradient(135deg, var(--king-gold), #f59e0b);
+            border-radius: 24px;
+            color: white;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-crown::before {
+            content: '👑';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8rem;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(15deg); }
+        }
+        
+        .level-crown {
+            background: linear-gradient(135deg, var(--king-gold), var(--king-red));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.3);
+        }
+        
+        .import-option {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid #f1f5f9;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .import-option:hover {
+            border-color: var(--king-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
+        }
+        
+        .import-option.selected {
+            border-color: var(--king-blue);
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        }
+        
+        .king-button {
+            background: linear-gradient(135deg, var(--king-blue), var(--king-purple));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .king-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.3);
+        }
+        
+        .king-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- 王者頭部區域 -->
+        <div class="hero-crown">
+            <div class="relative z-10">
+                <div class="level-crown mb-6">
+                    <span>👶</span>
+                    <span>新手商人 Lv.1</span>
+                </div>
+                <h1 class="text-5xl font-black mb-4">電商王者之路</h1>
+                <p class="text-2xl opacity-90 mb-8">開始您的征戰旅程，登上電商王座！</p>
+            </div>
+        </div>
+        
+        <!-- 數據匯入選項 -->
+        <div class="king-card p-8 mb-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">🎯 第一步：匯入您的戰力數據</h2>
+            <p class="text-lg text-gray-600 mb-8">了解現況，制定征戰策略</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="import-option" onclick="selectImportMethod('csv')">
+                    <div class="text-4xl mb-4">📁</div>
+                    <h3 class="text-xl font-bold mb-2">上傳 CSV 檔案</h3>
+                    <p class="text-sm text-gray-600 mb-4">最簡單的方式，立即開始分析</p>
+                    <div class="text-xs text-gray-500">
+                        支援格式：日期,營收,流量,轉換率,客單價
+                    </div>
+                </div>
+                
+                <div class="import-option" onclick="selectImportMethod('datalake')">
+                    <div class="text-4xl mb-4">🏗️</div>
+                    <h3 class="text-xl font-bold mb-2">連接 DataLake</h3>
+                    <p class="text-sm text-gray-600 mb-4">BigQuery 數據湖自動同步</p>
+                    <div class="text-xs text-gray-500">
+                        企業級數據整合
+                    </div>
+                </div>
+                
+                <div class="import-option" onclick="selectImportMethod('ga')">
+                    <div class="text-4xl mb-4">📈</div>
+                    <h3 class="text-xl font-bold mb-2">Google Analytics</h3>
+                    <p class="text-sm text-gray-600 mb-4">連接 GA4 獲取流量數據</p>
+                    <div class="text-xs text-gray-500">
+                        專業數據分析
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 功能展示區域 -->
+        <div id="feature-display-area" class="hidden mb-6">
+            <!-- CSV 上傳功能區 -->
+            <div id="csv-feature" class="hidden">
+                <div class="king-card p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">📁 CSV 檔案上傳</h3>
+                    <div class="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onclick="document.getElementById('csv-file').click()">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-4"></i>
+                        <p class="text-lg font-medium text-blue-700 mb-2">點擊上傳或拖拽檔案到此處</p>
+                        <p class="text-sm text-blue-500 mb-4">支援 .csv 格式，最大 10MB</p>
+                        <div class="text-xs text-gray-500">
+                            檔案格式：日期,營收,流量,轉換率,客單價<br>
+                            範例：2024-01-01,450000,12500,2.3,1580
+                        </div>
+                    </div>
+                    <input type="file" id="csv-file" class="hidden" accept=".csv" onchange="handleFileUpload(event)">
+                </div>
+            </div>
+            
+            <!-- DataLake 開發中 -->
+            <div id="datalake-feature" class="hidden">
+                <div class="king-card p-8 text-center">
+                    <div class="text-6xl mb-4">🚧</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">DataLake 連接功能</h3>
+                    <p class="text-lg text-gray-600 mb-6">開發中，請耐心等候</p>
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-xl">
+                        <p class="text-sm text-orange-700">💡 此功能將支援 BigQuery、Snowflake 等企業級數據湖連接</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GA 開發中 -->
+            <div id="ga-feature" class="hidden">
+                <div class="king-card p-8 text-center">
+                    <div class="text-6xl mb-4">🚧</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Google Analytics 連接</h3>
+                    <p class="text-lg text-gray-600 mb-6">開發中，請耐心等候</p>
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-xl">
+                        <p class="text-sm text-orange-700">💡 此功能將支援 GA4 API 自動同步流量與轉換數據</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 數據預覽區域 -->
+        <div id="data-preview-area" class="hidden mb-6">
+            <div class="king-card p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">📊 數據預覽</h3>
+                    <button onclick="removeFile()" class="text-red-500 hover:text-red-700 text-sm">
+                        <i class="fas fa-times mr-1"></i>移除檔案
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-700" id="file-name"></span>
+                    <span class="text-xs text-gray-500 ml-2" id="file-info"></span>
+                </div>
+                <div id="data-preview-table" class="overflow-x-auto mb-6"></div>
+                <div class="text-center">
+                    <button onclick="analyzeData()" class="king-button">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        分析數據
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 數據摘要分析 -->
+        <div id="data-summary-area" class="hidden mb-6">
+            <div class="king-card p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">📈 營運數據摘要</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="text-center p-4 bg-blue-50 rounded-xl">
+                        <div class="text-2xl font-bold text-blue-600" id="avg-sessions">-</div>
+                        <div class="text-sm text-gray-600">日均流量</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-xl">
+                        <div class="text-2xl font-bold text-green-600" id="avg-orders">-</div>
+                        <div class="text-sm text-gray-600">日均訂單數</div>
+                    </div>
+                    <div class="text-center p-4 bg-orange-50 rounded-xl">
+                        <div class="text-2xl font-bold text-orange-600" id="avg-aov">-</div>
+                        <div class="text-sm text-gray-600">平均訂單金額</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-xl">
+                        <div class="text-2xl font-bold text-purple-600" id="avg-cvr">-</div>
+                        <div class="text-sm text-gray-600">平均轉換率</div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-xl mb-6">
+                    <h4 class="font-bold text-gray-800 mb-2">💡 數據洞察</h4>
+                    <p id="data-insights" class="text-sm text-gray-700">-</p>
+                </div>
+                <div class="text-center">
+                    <button onclick="proceedToGoalSetting()" class="king-button">
+                        <i class="fas fa-target mr-2"></i>
+                        設定征戰目標
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedData = null;
+        let selectedMethod = null;
+
+        function selectImportMethod(method) {
+            // 重置所有選項
+            document.querySelectorAll('.import-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // 隱藏所有功能區
+            document.querySelectorAll('#feature-display-area > div').forEach(feature => {
+                feature.classList.add('hidden');
+            });
+            
+            // 選中當前選項
+            event.currentTarget.classList.add('selected');
+            selectedMethod = method;
+            
+            // 顯示對應功能區
+            document.getElementById('feature-display-area').classList.remove('hidden');
+            document.getElementById(`${method}-feature`).classList.remove('hidden');
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('檔案大小不能超過 10MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csv = e.target.result;
+                    const data = parseCSV(csv);
+                    displayDataPreview(file, data);
+                    uploadedData = data;
+                } catch (error) {
+                    alert('CSV 格式錯誤，請檢查檔案格式');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim());
+            const data = [];
+            
+            // 實際欄位順序：日期,總營業額,交易會員數,總訂單量,成交訂單均價,網路新會員數,工作階段,轉換率
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length >= 7) {
+                    data.push({
+                        date: values[0],                    // 日期
+                        revenue: parseFloat(values[1]) || 0, // 總營業額
+                        members: parseFloat(values[2]) || 0, // 交易會員數
+                        orders: parseFloat(values[3]) || 0,  // 總訂單量
+                        aov: parseFloat(values[4]) || 0,     // 成交訂單均價
+                        newMembers: parseFloat(values[5]) || 0, // 網路新會員數
+                        traffic: parseFloat(values[6]) || 0, // 工作階段
+                        cvr: parseFloat(values[7]) || 0      // 轉換率
+                    });
+                }
+            }
+            return data;
+        }
+
+        function displayDataPreview(file, data) {
+            document.getElementById('file-name').textContent = file.name;
+            document.getElementById('file-info').textContent = `${data.length} 筆資料，檔案大小：${(file.size/1024).toFixed(1)} KB`;
+            
+            const preview = data.slice(0, 5);
+            const table = `
+                <table class="min-w-full text-sm border border-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-2 py-2 border text-xs">日期</th>
+                            <th class="px-2 py-2 border text-xs">總營業額</th>
+                            <th class="px-2 py-2 border text-xs">交易會員</th>
+                            <th class="px-2 py-2 border text-xs">總訂單量</th>
+                            <th class="px-2 py-2 border text-xs">訂單均價</th>
+                            <th class="px-2 py-2 border text-xs">新會員</th>
+                            <th class="px-2 py-2 border text-xs">工作階段</th>
+                            <th class="px-2 py-2 border text-xs">轉換率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${preview.map(row => `
+                            <tr class="border-t">
+                                <td class="px-2 py-2 border text-xs">${row.date}</td>
+                                <td class="px-2 py-2 border text-xs">$${row.revenue.toLocaleString()}</td>
+                                <td class="px-2 py-2 border text-xs">${row.members}</td>
+                                <td class="px-2 py-2 border text-xs">${row.orders}</td>
+                                <td class="px-2 py-2 border text-xs">$${row.aov.toLocaleString()}</td>
+                                <td class="px-2 py-2 border text-xs">${row.newMembers}</td>
+                                <td class="px-2 py-2 border text-xs">${row.traffic.toLocaleString()}</td>
+                                <td class="px-2 py-2 border text-xs">${row.cvr}%</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                ${data.length > 5 ? `<p class="text-xs text-gray-500 mt-2">顯示前 5 筆，共 ${data.length} 筆資料</p>` : ''}
+            `;
+            
+            document.getElementById('data-preview-table').innerHTML = table;
+            document.getElementById('data-preview-area').classList.remove('hidden');
+        }
+
+        function removeFile() {
+            document.getElementById('csv-file').value = '';
+            document.getElementById('data-preview-area').classList.add('hidden');
+            document.getElementById('data-summary-area').classList.add('hidden');
+            uploadedData = null;
+        }
+
+        function analyzeData() {
+            if (!uploadedData || uploadedData.length === 0) return;
+            
+            const button = event.target;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>分析中...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                const summary = calculateSummary(uploadedData);
+                displaySummary(summary);
+                button.innerHTML = '<i class="fas fa-chart-line mr-2"></i>分析數據';
+                button.disabled = false;
+            }, 1500);
+        }
+
+        function calculateSummary(data) {
+            const validData = data.filter(d => d.revenue > 0);
+            
+            const avgSessions = validData.reduce((sum, d) => sum + d.traffic, 0) / validData.length;
+            const avgRevenue = validData.reduce((sum, d) => sum + d.revenue, 0) / validData.length;
+            const avgCvr = validData.reduce((sum, d) => sum + d.cvr, 0) / validData.length;
+            const avgAov = validData.reduce((sum, d) => sum + d.aov, 0) / validData.length;
+            const avgOrders = validData.reduce((sum, d) => sum + d.orders, 0) / validData.length;
+            
+            return {
+                avgSessions: Math.round(avgSessions),
+                avgOrders: Math.round(avgOrders),
+                avgAov: Math.round(avgAov),
+                avgCvr: avgCvr.toFixed(2),
+                totalDays: validData.length,
+                totalRevenue: validData.reduce((sum, d) => sum + d.revenue, 0)
+            };
+        }
+
+        function displaySummary(summary) {
+            document.getElementById('avg-sessions').textContent = summary.avgSessions.toLocaleString();
+            document.getElementById('avg-orders').textContent = summary.avgOrders.toLocaleString();
+            document.getElementById('avg-aov').textContent = `$${summary.avgAov.toLocaleString()}`;
+            document.getElementById('avg-cvr').textContent = `${summary.avgCvr}%`;
+            
+            let insights = `根據 ${summary.totalDays} 天的數據分析，您的電商表現`;
+            if (summary.avgCvr > 3) {
+                insights += "轉換率表現優秀，建議重點提升流量獲取。";
+            } else if (summary.avgCvr < 1.5) {
+                insights += "轉換率有提升空間，建議優化商品頁面和結帳流程。";
+            } else {
+                insights += "各項指標表現穩定，可考慮同步提升流量和轉換率。";
+            }
+            
+            document.getElementById('data-insights').textContent = insights;
+            document.getElementById('data-summary-area').classList.remove('hidden');
+        }
+
+        function proceedToGoalSetting() {
+            alert('即將進入目標設定頁面...');
+            // 這裡可以跳轉到目標設定頁面
+        }
+    </script>
+</body>
+</html>
