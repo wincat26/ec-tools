@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# 環境變數
+.env
+.env.local
+
+# 輸出檔案
+output/*.html
+!output/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日誌
+*.log
+
+# 測試覆蓋率
+.coverage
+htmlcov/
+
+# 服務帳號金鑰（不應提交到 Git）
+*.json
+!package*.json
+

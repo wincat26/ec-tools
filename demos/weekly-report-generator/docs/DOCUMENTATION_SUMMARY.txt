@@ -1,0 +1,33 @@
+電商週報生成器 - 文件總覽
+=====================================
+
+📚 文件列表（共 17 個文件）
+
+【必讀文件】
+1. QUICK_START.md - 快速開始指南（5分鐘上手）
+2. HANDOVER_DOCUMENT.md - 完整交接文件（最重要！）
+3. CODE_STRUCTURE.md - 程式碼結構說明
+
+【技術文件】
+4. AUTHENTICATION_SETUP.md - Google Cloud 認證設定
+5. DATABASE_SCHEMA.md - 資料庫結構說明
+6. SQL_QUERY_UPDATE.md - SQL 查詢更新記錄
+7. TRAFFIC_CLASSIFICATION.md - 流量分類規則
+8. TRAFFIC_ANALYSIS_IMPLEMENTATION.md - 流量分析實作
+9. TRANSACTION_ID_VERIFICATION.md - Transaction ID 驗證
+
+【其他文件】
+10. CONFIGURATION_SUMMARY.md - BigQuery 配置總結
+11. DATA_REQUIREMENTS.md - 資料需求規格
+12. CHANGELOG.md - 更新日誌
+13. FINAL_SUMMARY.md - 完成總結
+14. DOCUMENTATION_INDEX.md - 文件索引（本文件）
+
+【入口文件】
+15. README.md - 專案說明（從這裡開始）
+
+=====================================
+新接手請依序閱讀：
+1. QUICK_START.md
+2. HANDOVER_DOCUMENT.md
+3. CODE_STRUCTURE.md

@@ -126,8 +126,8 @@
 ## 🔗 相關檔案
 
 - [專案結構說明](./PROJECT_STRUCTURE.md)
-- [產品認知摘要](./doc/product_prd/產品認知摘要.md)
-- [Prototype README](./prototype/README.md)
+- [產品認知摘要](./docs/product/產品認知摘要.md)
+- [Prototype README](./demos/prototype/README.md)
 
 ---
 

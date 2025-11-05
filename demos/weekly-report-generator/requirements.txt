@@ -1,0 +1,24 @@
+# 電商週報生成器 - Python 依賴套件
+
+# BigQuery 資料查詢
+google-cloud-bigquery>=3.11.0
+google-auth>=2.23.0
+db-dtypes>=1.2.0  # BigQuery 資料類型支援
+
+# 資料處理
+pandas>=2.0.0
+numpy>=1.24.0
+
+# 圖表生成
+pyecharts>=2.0.4
+jinja2>=3.1.2
+
+# 環境變數管理
+python-dotenv>=1.0.0
+
+# 日期時間處理
+python-dateutil>=2.8.2
+
+# 工具函式
+tqdm>=4.66.0  # 進度條顯示
+

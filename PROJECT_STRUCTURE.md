@@ -1,7 +1,8 @@
 # AI 營運顧問系統 — 專案資料夾結構規劃
 
 **建立日期**：2025-01-27  
-**版本**：v1.0
+**版本**：v2.0  
+**最後更新**：2025-01-27（重新歸類 demo/poc 項目與文檔）
 
 ---
 
@@ -127,30 +128,38 @@ ec-tools/
 │       └── data_quality/
 │           └── validation.js
 │
-├── doc/                              # 專案文檔（現有）
-│   ├── product_prd/                  # PRD 相關文檔
-│   ├── config/                       # 配置文檔
-│   ├── scripts/                      # 文檔腳本
-│   └── log/                          # 日誌檔案
+├── demos/                             # Demo/POC 項目
+│   ├── prototype/                     # 視覺化 Prototype（HTML/CSS/JS）
+│   │   ├── index.html                 # Prototype 首頁
+│   │   ├── dashboard.html             # Dashboard 頁面
+│   │   ├── css/                       # 樣式檔案
+│   │   ├── js/                        # JavaScript 邏輯
+│   │   └── assets/                    # 靜態資源
+│   ├── weekly-report-generator/       # 週報生成工具（POC）
+│   │   ├── src/                       # 核心程式碼
+│   │   ├── config/                    # 配置檔案
+│   │   ├── docs/                      # 專案文檔
+│   │   └── output/                    # 輸出檔案
+│   └── ecommerce-growth-planner/      # 電商成長規劃器（Demo）
 │
-├── prd/                              # PRD 原始檔案（現有）
+├── docs/                              # 專案文檔（重新整理）
+│   ├── prd/                           # PRD 原始檔案
+│   │   ├── 專案總覽與背景說明.txt
+│   │   ├── 產品功能總覽.txt
+│   │   └── ...
+│   ├── product/                       # 產品文檔
+│   │   ├── 產品認知摘要.md
+│   │   ├── prototype-sitemap.md
+│   │   └── ...
+│   ├── technical/                     # 技術文檔
+│   ├── guidelines/                    # 開發規範
+│   ├── config/                        # 配置文檔
+│   ├── scripts/                       # 文檔腳本
+│   └── log/                           # 日誌檔案
 │
-├── prototype/                         # 視覺化 Prototype（HTML/CSS/JS）
-│   ├── index.html                    # Prototype 首頁
-│   ├── dashboard.html                # Dashboard 頁面
-│   ├── login.html                    # 登入頁面
-│   ├── css/
-│   │   ├── main.css                  # 主要樣式
-│   │   ├── components.css            # 組件樣式
-│   │   └── dashboard.css              # Dashboard 專用樣式
-│   ├── js/
-│   │   ├── main.js                   # 主要邏輯
-│   │   ├── dashboard.js              # Dashboard 邏輯
-│   │   ├── mockData.js               # 假資料
-│   │   └── utils.js                  # 工具函數
-│   └── assets/
-│       ├── images/
-│       └── icons/
+├── archive/                            # 備份與歷史檔案
+│   ├── backup/                        # 備份檔案
+│   └── temp/                          # 臨時檔案
 │
 ├── scripts/                          # 開發與部署腳本
 │   ├── setup.sh                      # 環境設定腳本
@@ -198,16 +207,26 @@ ec-tools/
   - `sql/`：手動查詢與遷移腳本
   - `scripts/`：資料匯入與品質檢查腳本
 
-### `prototype/` — 視覺化 Prototype
-- **技術棧**：純 HTML/CSS/JavaScript（無框架，快速驗證）
-- **用途**：快速視覺化驗證 UI/UX 設計、使用者流程
-- **特色**：使用假資料，可離線運行，便於展示與討論
+### `demos/` — Demo/POC 項目
+- **prototype/**：視覺化 Prototype
+  - **技術棧**：純 HTML/CSS/JavaScript（無框架，快速驗證）
+  - **用途**：快速視覺化驗證 UI/UX 設計、使用者流程
+  - **特色**：使用假資料，可離線運行，便於展示與討論
+- **weekly-report-generator/**：週報生成工具（POC 狀態）
+  - **技術棧**：Python + PyEcharts + BigQuery
+  - **用途**：自動生成電商週報，整合 BigQuery 資料與 GA4 流量分析
+- **ecommerce-growth-planner/**：電商成長規劃器（Demo 狀態）
 
-### `doc/` — 專案文檔
-- PRD 相關文檔
-- API 文件
-- 開發規範
-- 部署指南
+### `docs/` — 專案文檔（重新整理）
+- **prd/**：PRD 原始檔案（.txt 格式）
+- **product/**：產品文檔（產品認知、sitemap、onboarding 等）
+- **technical/**：技術文檔（API 文件、架構說明等）
+- **guidelines/**：開發規範與指南
+- **config/**、**scripts/**、**log/**：配置、腳本與日誌檔案
+
+### `archive/` — 備份與歷史檔案
+- **backup/**：備份的 HTML、PDF 等檔案
+- **temp/**：臨時檔案
 
 ---
 
