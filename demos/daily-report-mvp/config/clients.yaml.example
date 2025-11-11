@@ -1,0 +1,21 @@
+# 客戶設定檔範例
+# 複製此檔案為 clients.yaml 並填入實際值
+
+clients:
+  - client_id: "client_A"
+    bigquery:
+      project_id: "datalake360-saintpaul"
+      dataset_id: "datalake_stpl"
+      ga4_dataset: "analytics_304437305"
+    monthly_target_revenue: 2000000  # 每月營收目標（元）
+    google_chat_webhook: "https://chat.googleapis.com/v1/spaces/XXXXX/messages?key=YYYYY&token=ZZZZZ"
+  
+  # 更多客戶範例
+  # - client_id: "client_B"
+  #   bigquery:
+  #     project_id: "another-project"
+  #     dataset_id: "another_dataset"
+  #     ga4_dataset: "analytics_123456789"
+  #   monthly_target_revenue: 3000000
+  #   google_chat_webhook: "https://chat.googleapis.com/v1/spaces/..."
+

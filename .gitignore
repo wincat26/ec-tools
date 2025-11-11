@@ -60,3 +60,15 @@ temp/
 # Prototype (optional - can track if needed)
 # prototype/
 
+
+# Private secrets
+config/private/
+config/*.env
+
+# Generated outputs
+**/logs/
+**/output/
+archive/
+!config/secrets.example.env
+docs/private/
+tools/spec-kit/

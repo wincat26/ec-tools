@@ -1,7 +1,7 @@
 # AI 營運顧問系統 — 開發任務清單
 
 **建立日期**：2025-01-27  
-**最後更新**：2025-11-03
+**最後更新**：2025-11-07
 
 ---
 
@@ -34,14 +34,28 @@
 - [x] 盤點 `prototype` 目錄主要頁面、樣式與腳本模組
 - [x] GitHub 遠端同步策略整理（Repo 結構、忽略項目、協作流程）
 
+### ✅ Daily Report MVP
+- [x] 改寫 GA4 驗證流程（改讀 `datalake_looker.daily_metrics` 並顯示 warning）
+- [x] 調整 Google Chat 卡片（新增 GA4 小字提醒、廣告花費整數化）
+- [x] 強化 `run_daily_report.sh`（重試機制、狀態檔、detail log）
+- [x] LaunchAgent 排程調整為每日 09:30
+- [x] 建立 `docs/worklogs/` 並記錄 2025-11-07 作業
+
 ---
 
 ## 🔄 進行中任務
+### Prototype 優化
 - [ ] Dashboard 首屏佈局重構（卡片等高、內容溢出、響應式）
 - [ ] JS 載入流程與 Skeleton 行為調整（移除多餘高度計算、優化載入 UX）
 - [ ] AI 即時洞察資訊流模組化（資料來源、動態渲染、互動設計）
 - [ ] 數據分析頁 Insights／智能診斷資訊架構整併
 - [ ] 數據分析頁 KPI 互動（來源切換聯動其他模組）
+
+### Weekly Report Automation
+- [ ] 建立 4 個週度 View（overview/ad/member/product）
+- [ ] 更新 `weekly-report-generator` 模板為四分頁架構
+- [ ] 規劃週報排程腳本與 Google Chat 推播
+- [ ] 補齊 weekly-report-generator 交接文件（README / Handover / Quick Start）
 
 ---
 
@@ -116,10 +130,12 @@
 |------|------|------|------|
 | 專案結構 | ✅ 完成 | 100% | 資料夾與設定檔已建立 |
 | Prototype | ✅ 完成 | 100% | 可獨立運行，包含所有核心功能 |
-| 前端開發 | ⏸️ 待開始 | 0% | 等待 Prototype 驗證 |
-| 後端開發 | ⏸️ 待開始 | 0% | 等待前端開發 |
-| 資料層 | ⏸️ 待開始 | 0% | 等待後端開發 |
-| AI 模組 | ⏸️ 待開始 | 0% | 等待後端開發 |
+| Daily Report MVP | ✅ 完成 | 100% | GA4 驗證、排程、推播皆穩定 |
+| Weekly Report Automation | 🔄 進行中 | 20% | 規格 (SDD) 完成，待建立 view 與模板 |
+| 月報 / 其他模組 | ⏸️ 待開始 | 0% | 依整體 Roadmap 規劃 |
+| 前端（正式版） | ⏸️ 待開始 | 0% | 等待 Prototype 驗證 |
+| 後端 / API | ⏸️ 待開始 | 0% | 等待前端需求 |
+| 資料層（Dataform） | ⏸️ 待開始 | 0% | 等待週報後續需求 |
 
 ---
 

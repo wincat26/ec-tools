@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# 客戶設定檔（包含敏感資訊）
+config/clients.yaml
+
+# 環境變數
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 輸出檔案
+output/
+*.log
+
+# 測試覆蓋率
+.coverage
+htmlcov/
+
+# 暫存檔案
+*.tmp
+*.bak
+

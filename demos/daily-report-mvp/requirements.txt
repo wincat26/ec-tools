@@ -1,0 +1,17 @@
+# 每日數據彙整日報 - Python 依賴
+
+# Google Cloud
+google-cloud-bigquery>=3.11.0
+
+# HTTP 請求
+requests>=2.31.0
+
+# 配置管理
+pyyaml>=6.0
+
+# 環境變數
+python-dotenv>=1.0.0
+
+# 日期處理
+python-dateutil>=2.8.2
+
